@@ -1,0 +1,29 @@
+---
+title: Test Post
+author: ''
+date: '2020-12-05'
+slug: test-post
+categories: []
+tags: []
+description: ''
+---
+
+# Heading of my post 
+
+Content of my post 
+
+## Subheading 
+
+More content 
+
+```{r}
+quakes<-quakes
+```
+
+```{python}
+r.quakes.mag.mean()
+
+```
+<center>
+![](/post/2020-12-05-test-post_files/Nam Do san.jpg){width=20%}
+</center>
