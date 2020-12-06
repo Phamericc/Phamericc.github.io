@@ -1,5 +1,5 @@
 ---
-title: Start Up Blog Post
+title: The interconnectedness of R and Python
 author: ''
 date: '2020-12-05'
 slug: test-post
