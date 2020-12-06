@@ -1,8 +1,355 @@
 ---
-title: "Project 2"
-author: "Me"
-date: "2020-12-01"
+title: "FINALPROECT2"
+author: "Eric Pham"
+date: "11/19/2020"
 output: html_document
 ---
 
-## Test Project 2
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+hook_output = knit_hooks$get('output')
+knit_hooks$set(output = function(x, options) {
+  # this hook is used only when the linewidth option is not NULL
+  if (!is.null(n <- options$linewidth)) {
+    x = knitr:::split_lines(x)
+    # any lines wider than n should be wrapped
+    if (any(nchar(x) > n)) x = strwrap(x, width = n)
+    x = paste(x, collapse = '\n')
+  }
+  hook_output(x, options)
+})
+
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE,fig.align="center",warning=FALSE,message=FALSE,fig.width=8, fig.height=5, linewidth=60)
+options(tibble.width = 100,width = 100)
+library(tidyverse)
+```
+
+## Digimon Data
+
+### Data upload
+```{r}
+library(tidyverse)
+library(readr)
+Digimon <- read.csv("DigiDB_digimonlist.csv")
+digimon<-Digimon %>% dplyr::rename(Lv50HP = "Lv.50.HP",Lv50SP="Lv50.SP",Lv50Atk="Lv50.Atk",Lv50Def="Lv50.Def",Lv50Int="Lv50.Int",Lv50Spd="Lv50.Spd")
+head(digimon)
+```
+
+#### Digimon, short for “digital monsters”, is a franchise which revolves around a core mechanic of capturing, caring for and training monsters and then engaging in combat with them. It’s similar to Pokémon. This dataset contains information on digimon from “Digimon Digimon Story: Cyber Sleuth”, released for Playstation Vita in 2015 and Playstation 4 in 2016.This database contains three files: a list of all the digimon that can be captured or fought in Cyber Sleuth, all the moves which Digimon can perform, and all the Support Skills. (Support Skills are a passive, stackable, team-wide buff. Each species of Digimon is associated with a single Support Skill.) Some variables present in this dataset include Stage,Type,attribute,Memory,HP,Attck,and SP at level 50.
+
+- **1. (15 pts)** Perform a MANOVA testing whether any of your numeric variables (or a subset of them, if including them all is unreasonable or doesn't make sense) show a mean difference across levels of one of your categorical variables (3). If they do, perform univariate ANOVAs to find response(s) showing a mean difference across groups (3), and perform post-hoc t tests to find which groups differ (3). Discuss the number of tests you have performed, calculate the probability of at least one type I error (if unadjusted), and adjust the significance level accordingly (bonferroni correction) before discussing significant differences (3). Briefly discuss MANOVA assumptions and whether or not they are likely to have been met (no need for anything too in-depth) (2).
+
+```{r}
+#Actual MANOVA
+man1<-manova(cbind(Lv50HP,Lv50SP,Lv50Atk, Lv50Def, Lv50Int, Lv50Spd)~Attribute, data=digimon)
+summary(man1)
+#Mean values in each group
+digimon%>%group_by(Attribute)%>%summarize(mean(Lv50HP),mean(Lv50SP),mean(Lv50Atk),mean(Lv50Def),mean(Lv50Int),mean(Lv50Spd))%>%kable#Mean values of each attribute in each combat stat category
+```
+
+#### The MANOVA calulated above was significant. From the MANOVA, significant differences were found among the numeric variables for at least one of the dependent variables, Pillai trace = 0.75854, approx F = 4.3416, with a p-value <2.2e-16. Becasue of our results, we will continue and run ANOVAs for the varaibles. The table above demonstrates the mean different of numeric variables in each attribute group. 
+
+```{r}
+#ANOVAs
+summary.aov(man1) #All significantly different, except for Lv50HP 
+```
+
+#### After performing ANOVAs to test whether my numeric variables Lv50HP,Lv50SP,Lv50Atk, Lv50Def, Lv50Int, Lv50Spd, showed a mean difference across attributes. It was determined through the ANOVA tests that each numeric variable differed in each attribute group significantly, except for Lv50HP (Not significant). Post-Hoc tests will be administered to all significant variables (excluding Lv50HP).
+
+```{r}
+#Post-Hoc tests
+pairwise.t.test(digimon$Lv50SP, digimon$Attribute, p.adj = "none")
+pairwise.t.test(digimon$Lv50Atk, digimon$Attribute, p.adj = "none")
+pairwise.t.test(digimon$Lv50Def, digimon$Attribute, p.adj = "none")
+pairwise.t.test(digimon$Lv50Int , digimon$Attribute, p.adj = "none")
+pairwise.t.test(digimon$Lv50Spd, digimon$Attribute, p.adj = "none")
+#Prob of at least one type I errir is
+1-(0.95^187)   
+#Bonferroni correction
+0.05/187 #Alpha/Number of test
+```
+
+#### Becasue 187 tests were conducted, the probability of a Type I error is 99.99317, and the bonferronic correction was calculated to be 0.00027. With the new bonferroni alpha level as 0.00027, a great majority of the groups that was once significant, became non-significant. 
+
+```{r}
+#Checking for MANOVA assumptions
+library(rstatix)
+group <- digimon$Attribute 
+DVs <- digimon %>% select(Lv50SP,Lv50Atk,Lv50Def,Lv50Int,Lv50Spd)
+sapply(split(DVs,group), mshapiro_test)
+```
+
+#### Assumptions for my data was not met with the following variables because "Light" was determined to not be significant. In theory, because one of my variable's p-value was less than 0.05 I would not proceed any further testing the homogeneit or covariance matrices. 
+
+- **2. (10 pts)** Perform some kind of randomization test on your data (that makes sense). The statistic can be anything you want (mean difference, correlation, F-statistic/ANOVA, chi-squared), etc. State null and alternative hypotheses, perform the test, and interpret the results (7). Create a plot visualizing the null distribution and the test statistic (3).
+
+```{r}
+library(dplyr)
+mutated<-digimon
+mutated <- mutate(digimon, y = ifelse(Type == "Virus", 1, 0))
+mutated%>%group_by(y)%>%summarize(means=mean(Lv50Atk))%>%summarize(diff(means))
+
+ggplot(mutated,aes(Lv50Atk,fill=y))+geom_histogram(bins=6.5)+
+facet_wrap(~y,ncol=2)+theme(legend.position="none")
+
+```
+
+#### For this question, I will be conducting a randomization tests of differences of means to see if mean power level between two groups differ significantly. H0= There is no significant difference in mean attack power level between virus type digimon and the other types of digimon. HA: There is a significant difference in mean attack power level between virus type digimon and the other types of digimon. Firstly, the mean difference of attack power at level 50 between virus type digimon and the other type of digimon was calculated to be 8.828246. Also a graph depicting the two groups is illustrated above. The "1" represents the virus type digimon attack power and the "0" represents the other type of digimon's attack power. 
+
+```{r}
+set.seed(1234)
+rand_dist<-vector()
+for(i in 1:5000){
+new<-data.frame(Lv50atk=sample(mutated$Lv50Atk),y=mutated$y)
+rand_dist[i]<-mean(new[new$y=="1",]$Lv50atk)-
+mean(new[new$y=="0",]$Lv50atk)}
+
+{hist(rand_dist,main="",ylab=""); abline(v = c(-8.828246, 8.828246),col="red")}
+```
+
+#### After conducting a randomization tests for the mean difference between the two groups, a graph was created to track all the possible mean difference variations. 
+
+```{r}
+mean(rand_dist>8.828246 | rand_dist < -8.828246)
+```
+
+#### The calculated P-value for the data above was calculated to be 0.1518, which is greater than the alpha (0.05), which means that we fail to reject the null hypothesis. There appears to be no significant difference between the mean power levels of the two different groups. 
+
+- **3. (35 pts)** Build a linear regression model predicting one of your response variables from at least 2 other variables, including their interaction. Mean-center any numeric variables involved in the interaction.
+
+    - Interpret the coefficient estimates (do not discuss significance) (10)
+    - Plot the regression using `ggplot()` using geom_smooth(method="lm"). If your interaction is numeric by numeric, refer to code in the slides to make the plot or check out the `interactions` package, which makes this easier. If you have 3 or more predictors, just chose two of them to plot for convenience. (8)
+    - Check assumptions of linearity, normality, and homoskedasticity either graphically or using a hypothesis test (4)
+    - Regardless, recompute regression results with robust standard errors via `coeftest(..., vcov=vcovHC(...))`. Discuss significance of results, including any changes from before/after robust SEs if applicable. (8)
+    - What proportion of the variation in the outcome does your model explain? (4)
+```{r}
+library(sandwich); library(lmtest)
+digimon1<-digimon
+#Center grabbed speed and attack power
+digimon1$spd_c<-digimon1$Lv50Spd-mean(digimon1$Lv50Spd,na.rm=T)
+digimon1$atk_c<-digimon1$Lv50Atk-mean(digimon1$Lv50Atk,na.rm=T)
+#Linear regression 
+fit00<-lm(spd_c~atk_c*Type,data=digimon1)
+summary(fit00) #Multiple R-squared: 0.3293
+```
+
+#### Based on the results, for every one unit increase in atk_c, controlling for Type, spd_c is likely to increase by 0.36. If the digimon is a Free type, with average attack, then the speed will decrease by -13.004. If the digimon is a vaccine type with average attack, then the speed will increase by 0.853. If the digimon is a virus type, with average attack, then the speed of it will decrease by -10.78. For the atk_c:TypeFree coefficient, if a digimon is a free type, then for every 1 unit increase in atk_c, the spd_c will increase by 0.228. For the atk_c:TypeVaccine coefficient, if the digimon is a vaccine type, then for every 1 unit increase in atk_c, the spd_c will decrease by -0.044. Lastly, for virus type digimon, for every 1 unit increase in atk_c, spd_c will decrease by -0.0293. 
+
+```{r}
+#Regression plot 
+ggplot(digimon1, aes(spd_c,atk_c, color = Type))+geom_point(aes(color=Type))+geom_smooth(method="lm")
+```
+
+#### The graph above illustrates speed (spd_c) and type, and their effects on attack power (atk_c) 
+
+### Checking assumptions:
+```{r}
+ 
+resids<-lm(spd_c~atk_c*Type,data=digimon1)$residuals
+ggplot()+geom_histogram(aes(resids),bins=10)
+```
+
+#### The histogram produced above appears to be skewed (Possible violation). 
+
+```{r}
+fitted<-lm(spd_c~atk_c*Type,data=digimon1)$fitted.values
+ggplot()+geom_point(aes(fitted,resids))
+```
+
+#### Variance does not look too constant based on the graph above (Possible violation). 
+
+```{r}
+ggplot(digimon1,aes(Lv50Atk,Lv50Spd,color=Type))+geom_point()
+```
+
+#### Appears to be a fanning pattern based on the graph above, which would violate the homoskedasticity assumption. 
+
+```{r}
+coeftest(fit00)
+coeftest(fit00, vcov = vcovHC(fit00))
+```
+
+#### After computing robust SEs, everything remained the same, except for atk_c:TypeFree, which went from non-significant to significant. All coefficients reamined very similar to the origianl coefficients. My model's adjusted R value was calculated to be 0.3099 ( This is the proprotion of variation in the response variable explianed by the overall model). 
+
+- **4. (5 pts)** Rerun same regression model (with the interaction), but this time compute bootstrapped standard errors (either by resampling observations or residuals). Discuss any changes you observe in SEs and p-values using these SEs compared to the original SEs and the robust SEs)
+```{r}
+#BootstrappedSEs
+set.seed(1234)
+boot_dat<- sample_frac(digimon1, replace=T)
+samp_distn<-replicate(5000, {
+boot_dat <- sample_frac(digimon1, replace=T) #take bootstrap sample of rows
+fit <- lm(spd_c~atk_c*Type,data=boot_dat) #fit model on bootstrap sample
+coef(fit) #save coefs
+})
+# Estimated Boostrapped SEs
+samp_distn %>% t %>% as.data.frame %>% summarize_all(sd) %>% round(3)
+```
+
+#### After running the same regression model with interaction;however, using the bootstrapped standard errors by resampling observations, there were changes to the SEs of the variables. The intercept changed to 4.097, and some other changes include atk_c=0.086, TypeFree=5.463, TypeVaccine=5.281, TypeVirus=4.926	, atk_c:TypeFree=0.105, atk_c:TypeVaccine=0.101, and atk_c:TypeVirus=0.099.   
+
+- **5. (25 pts)** Fit a logistic regression model predicting a binary variable (if you don't have one, make/get one) from at least two explanatory variables (interaction not necessary). 
+
+    - Interpret coefficient estimates in context (10) 
+    - Report a confusion matrix for your logistic regression (2)
+    - Compute and discuss the Accuracy, Sensitivity (TPR), Specificity (TNR), Precision (PPV), and AUC of your model (5) 
+    - Using ggplot, make a density plot of the log-odds (logit) colored/grouped by your binary outcome variable (3) 
+    - Generate an ROC curve (plot) and calculate AUC (either manually or with a package); interpret (5) 
+```{r}
+class_diag <- function(probs,truth){
+#CONFUSION MATRIX: CALCULATE ACCURACY, TPR, TNR, PPV
+tab<-table(factor(probs>.5,levels=c("FALSE","TRUE")),truth)
+acc=sum(diag(tab))/sum(tab)
+sens=tab[2,2]/colSums(tab)[2]
+spec=tab[1,1]/colSums(tab)[1]
+ppv=tab[2,2]/rowSums(tab)[2]
+f1=2*(sens*ppv)/(sens+ppv)
+if(is.numeric(truth)==FALSE & is.logical(truth)==FALSE) truth<-as.numeric(truth)-1
+#CALCULATE EXACT AUC
+ord<-order(probs, decreasing=TRUE)
+probs <- probs[ord]; truth <- truth[ord]
+TPR=cumsum(truth)/max(1,sum(truth))
+FPR=cumsum(!truth)/max(1,sum(!truth))
+dup<-c(probs[-1]>=probs[-length(probs)], FALSE)
+TPR<-c(0,TPR[!dup],1); FPR<-c(0,FPR[!dup],1)
+n <- length(TPR)
+auc<- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+data.frame(acc,sens,spec,ppv,f1,auc)
+}
+```
+
+```{r}
+digimon7 <- mutate(digimon, y = ifelse(Type == "Vaccine", 1, 0)) #Binary response variable 
+fit7<-glm(y~Attribute+Lv50Atk, data=digimon7,family=binomial(link="logit"))
+summary(fit7) #Coefficients
+exp(coef(fit7)) %>% round(3)
+
+```
+
+#### The exponential intercept above represents the odds of the digimon being a Vaccine type, if attribute and Attack power level at 50 is controlled, which is 0.027. For AttributeEarth, the coefficient says that while controlling for Lv50Atk, if the digimon is an earth type, the odds of it being a vaccine type increase by a factor of 3.617. For AttributeElectric, if the digimon's lv50atk is controlled, having an electric attribute will increase the odds of the digimon being a vaccine type by a factor or 5.616. If a digimon has a fire attribute, while controlling for lv50Atk, the odds it's a vaccine type increase by a factor of 8.456. If a digimon has a Light attribute, while controlling for lv50Atk, the odds its a vaccine type increase by a factor of 45.512. If a digimon has a Neutral attribute, while controlling for lv50Atk, the odds its a vaccine type increase by a factor of 3.921. If a digimon has a Plant attribute, while controlling for lv50Atk, the odds its a vaccine type increase by a factor of 3.837.If a digimon has a water attribute, while controlling for lv50Atk, the odds its a vaccine type increase by a factor of 10.821. If a digimon has a wind attribute, while controlling for lv50Atk, the odds its a vaccine type increase by a factor of 12.567. Lastly, while controlling for attribute, for every 1 unit increase in Lv50Atk, the odds of the digimon being a vaccine type increase by 1.006. 
+
+```{r}
+prob <- predict(fit7, type = "response")  #save predicted probabilities
+table(predict = as.numeric(prob > 0.5), truth = digimon7$y) %>% addmargins() #Confusion Matrix
+class_diag(prob, digimon7$y) # Sensititivety=TPR,Specificity=TNR,Precision=PPV, etc. 
+```
+
+#### A confusion matrix is presented above. Additionally, based on my model, the Accuracy, Sensitivity (TPR), Specificity (TNR), Precision (PPV), and AUC are 0.7550201, 0.2857143, 0.9385475, 0.6451613, and 0.7565443, respectively.  
+
+```{r}
+#Density plot
+digimon7->digimon8
+digimon8$y<-as.factor(digimon8$y)
+digimon8$logit<-predict(fit7,type="link")
+digimon8%>%ggplot()+geom_density(aes(logit,color=y,fill=y), alpha=.4)+
+  theme(legend.position=c(.85,.85))+geom_vline(xintercept=0)+xlab("predictor (logit)")
+```
+
+#### The graph above represents a density plot for my data. 
+
+```{r}
+#install.packages("plotROC")
+library(plotROC)
+digimon7->digimon6
+fit<-lm(y~Lv50Atk*Attribute,data=digimon6,family="binomial")
+digimon6$prob<-predict(fit,type="response")
+digimon6$Attribute<-as.factor(digimon6$Attribute)
+ROCplot<-ggplot(digimon6)+geom_roc(aes(d=y,m=prob), n.cuts=0)
+ROCplot
+```
+
+#### The graph above illustrates the ROC Curve for my data, and from the first glance, it do not look too promising. 
+
+
+```{r}
+calc_auc(ROCplot)
+```
+
+#### The AUC was calculated to be 0.7730646, which is considered "FAIR" based on our rules of thumb for AUC values. 
+
+- **6. (25 pts)** Perform a logistic regression predicting the same binary response variable from *ALL* of the rest of your variables (the more, the better!) 
+
+    - Fit model, compute in-sample classification diagnostics (Accuracy, Sensitivity, Specificity, Precision, AUC), and interpret (5)
+    - Perform 10-fold (or repeated random sub-sampling) CV with the same model and report average out-of-sample classification diagnostics (Accuracy, Sensitivity, Specificity, Precision, and AUC); interpret AUC and compare with the in-sample metrics (10)
+    - Perform LASSO on the same model/variables. Choose lambda to give the simplest model whose accuracy is near that of the best (i.e., `lambda.1se`). Discuss which variables are retained. (5)
+    - Perform 10-fold CV using only the variables lasso selected: compare model's out-of-sample AUC to that of your logistic regressions above (5)
+
+```{r}
+digimon7 <- mutate(digimon, y = ifelse(Type == "Vaccine", 1, 0)) #Binary response variable 
+fit9<-glm(y~Attribute+Lv50Atk+Lv50HP+Lv50SP+Lv50Def+Lv50Int+Lv50Spd, data=digimon7,family=binomial(link="logit"))
+
+prob1 <- predict(fit9, type = "response")
+class_diag(prob1, digimon7$y) %>% round(3)
+summary(fit9)
+```
+
+#### Based on the model created above, the only significant variables are the attributes wind, water, light, and fire. They have the coefficients 2.4630616, 2.4247996,3.7053144, and 2.2152322 , respectively. The Accuracy, Sensitivity, Specificity, Precision, AUC  were calculated to be 0.771,0.329,0.944,0.697,and 0.76, respectively. The auc of 0.76 is classified as "fair". 
+
+```{r}
+#10 fold cross
+set.seed(1234)
+k=10 #choose number of folds
+data<-digimon7[sample(nrow(digimon7)),] #randomly order rows
+folds<-cut(seq(1:nrow(digimon7)),breaks=k,labels=F) #create 10 folds
+diags<-NULL
+for(i in 1:k){
+## Create training and test sets
+train<-data[folds!=i,]
+test<-data[folds==i,]
+truth<-test$y
+## Train model on training set
+fit<-glm(y~Attribute+Lv50Atk+Lv50HP+Lv50SP+Lv50Def+Lv50Int+Lv50Spd,data=train,family="binomial")
+probs<-predict(fit,newdata = test,type="response")
+## Test model on test set (save all k results)
+diags<-rbind(diags,class_diag(probs,truth))
+}
+diags%>%summarize_all(mean) %>% round(3)
+
+```
+
+#### The Accuracy, Sensitivity, Specificity, Precision, and AUC calculated using K-fold CV method is 0.73,0.276,0.902,NaN, and 0.683, respectively. The AUC value of 0.683 is considered poor.
+
+
+
+```{r}
+#Lasso 
+
+library(glmnet)
+library(dplyr)
+digimon4<-digimon7
+digimon4$y<-as.factor(digimon4$y)
+digimon4$Attribute<-factor(digimon4$Attribute)
+y <- as.matrix(digimon4$y) #Grab response
+x <- model.matrix(y~Attribute+Lv50Atk+Lv50HP+Lv50SP+Lv50Def+Lv50Int+Lv50Spd,data=digimon4)[,-1]#Grab predictors
+cv <- cv.glmnet(x, y, family = "binomial") #Picks optimal value for lambda 
+lasso <- glmnet(x, y, family = "binomial", lambda = cv$lambda.1se)
+coef(lasso) #Values that show up are the most predictive variables
+
+```
+
+#### After coducting a lasso, the only significant variable that would affect whether or not the digimon was Vaccine type or not is if their attribute was Light. 
+
+```{r}
+#LASSO CV
+set.seed(2345)
+digimon4<-digimon4 %>%mutate(AttributeLight=ifelse(digimon4$Attribute=="Light",1,0))
+k=10 #choose number of folds
+data1<-digimon4[sample(nrow(digimon4)),] #randomly order rows
+folds<-cut(seq(1:nrow(digimon4)),breaks=k,labels=F) #create folds
+diags<-NULL
+for(i in 1:k){
+  train<-data1[folds!=i,]
+  test<-data1[folds==i,]
+  truth<-test$y
+  fit<-lm(y~AttributeLight,data=train,family="binomial")
+  probs<-predict(fit,newdata = test,type="response")
+  diags<-rbind(diags,class_diag(probs,truth))
+}
+diags%>%summarize_all(mean)%>%round(3)
+
+```
+
+#### The new Accuracy, Sensitivity, Specificity, Precision, and AUC calculated using only significant predictin variables is 0.281,1	,0,0.281, and  0.609, respectively. THe AUC got even worst! So it's possible that the original model was probably not overfitting too much. 
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

@@ -60,7 +60,7 @@
  
 <div class="blog-title">
           <h4>
-         December 1, 2020 
+         January 1, 0001 
             &nbsp;&nbsp;
             
           </h4>
@@ -70,10 +70,895 @@
           <div class="panel-body">
             <div class="blogpost">
               
+<script src="../../rmarkdown-libs/htmlwidgets/htmlwidgets.js"></script>
+<script src="../../rmarkdown-libs/plotly-binding/plotly.js"></script>
+<script src="../../rmarkdown-libs/typedarray/typedarray.min.js"></script>
+<script src="../../rmarkdown-libs/jquery/jquery.min.js"></script>
+<link href="../../rmarkdown-libs/crosstalk/css/crosstalk.css" rel="stylesheet" />
+<script src="../../rmarkdown-libs/crosstalk/js/crosstalk.min.js"></script>
+<link href="../../rmarkdown-libs/plotly-htmlwidgets-css/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="../../rmarkdown-libs/plotly-main/plotly-latest.min.js"></script>
 
 
-<div id="test-project-1" class="section level2">
-<h2>Test Project 1</h2>
+<div id="eric-pham-edp645" class="section level1">
+<h1>Eric Pham edp645</h1>
+<div id="introduction" class="section level2">
+<h2>Introduction:</h2>
+<div id="i-decided-to-go-with-my-own-data-collected-on-my-electronic-devices-becasue-i-would-like-to-see-if-there-are-any-relationships-between-how-much-time-i-spend-on-social-media-amount-of-steps-walked-per-day-amount-of-time-spent-exercising-per-day-or-amount-of-sleep-per-night-depending-on-the-daydate.-with-how-my-schedule-is-now-i-feel-like-i-tend-to-waste-time-spend-more-time-on-social-media-and-not-workout-etc.-more-on-fridays-to-mondays-compared-to-tuesdays-to-thursdays-i-only-have-classes-to-attend-3-days-a-week.-im-interested-to-see-if-im-actually-more-productive-on-my-busy-days-then-when-i-am-on-my-relax-days." class="section level5">
+<h5>I decided to go with my own data, collected on my electronic devices, becasue I would like to see if there are any relationships between how much time I spend on social media, amount of steps walked per day, amount of time spent exercising per day, or amount of sleep per night, depending on the day/date. With how my schedule is now, I feel like I tend to &quot;waste time&quot; (Spend more time on social media and not workout, etc.) more on fridays to mondays, compared to tuesdays to thursdays (I only have classes to attend 3 days a week). I'm interested to see if I'm actually more productive on my busy days then when I am on my relax days.</h5>
+<hr />
+</div>
+<div id="importing-data" class="section level3">
+<h3>Importing data</h3>
+<div id="first-i-downloaded-mydata-from-my-smart-watch-and-iphone-into-my-computer-on-google-sheets-then-i-imported-my-data-from-google-sheets-into-my-computer-as-a-cvs-file.-i-then-uploaded-the-files-into-r-webversion.-next-i-imported-files-into-the-program-where-i-was-able-to-conduct-my-project.-next-i-ran-attach-in-order-for-my-newly-imported-files-to-be-readable-by-the-other-codes." class="section level4">
+<h4>First, I downloaded mydata from my smart watch and iphone into my computer on google sheets, then I imported my data from google sheets into my computer as a CVS file. I then uploaded the files into r (webversion). Next I imported files into the program, where I was able to conduct my project. Next I ran &quot;attach&quot; in order for my newly imported files to be readable by the other codes.</h4>
+<pre class="r"><code>library(readr)
+Apple_screen_time_Sheet1 &lt;- read.csv(&quot;Apple screen time - Sheet1.csv&quot;)
+Apple_watch_stats_Sheet1 &lt;- read.csv(&quot;Apple watch stats - Sheet1.csv&quot;)
+#attach(Apple_screen_time_Sheet1)
+#attach(Apple_watch_stats_Sheet1)</code></pre>
+<hr />
+</div>
+</div>
+</div>
+<div id="tidyingconverting-my-data-properlyjoining" class="section level2">
+<h2>Tidying/Converting my data properly/Joining</h2>
+<div id="in-this-chunk-i-am-converting-my-newly-imported-data-into-dataframes-by-piping-the-name-of-my-data-files-tino-as.matrix-function-and-then-piping-them-into-thee-as.data.frame.-i-rename-my-new-datasets-as-apple1-and-apple2.-next-i-do-a-full-join-combining-them-by-the-common-variable-id-and-naming-this-new-file-combined_projectdat.-next-i-had-to-converted-all-the-variables-into-characters-before-i-was-able-to-convert-only-specific-variables-into-numeric-variables.-i-name-the-finalized-dataset-as-finaldata" class="section level4">
+<h4>In this chunk, I am converting my newly imported data into dataframes, by piping the name of my data files tino as.matrix function and then piping them into thee as.data.frame. I rename my new datasets as &quot;Apple1&quot; and &quot;Apple2&quot;. Next I do a full join, combining them by the common variable &quot;ID&quot;, and naming this new file &quot;Combined_projectdat&quot;. Next, I had to converted all the variables into characters before I was able to convert only specific variables into numeric variables. I name the finalized dataset as &quot;finaldata&quot;</h4>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>Apple_screen_time_Sheet1 %&gt;% as.matrix %&gt;% as.data.frame -&gt; Apple1 
+Apple_watch_stats_Sheet1 %&gt;% as.matrix %&gt;% as.data.frame -&gt; Apple2
+
+#Full joining data by common variable &quot;date&quot;
+full_join(Apple1, Apple2, by=&quot;date&quot;) -&gt; Combined_dat
+Combined_dat %&gt;% mutate_all(as.character) -&gt;test
+column&lt;-c(&quot;mins_on_social_media&quot;, &quot;steps&quot;, &quot;exercise_min&quot;, &quot;sleep_min&quot;)
+test[, column] &lt;- lapply(column, function(x) as.numeric(test[[x]]))
+test-&gt;finaldata
+head(finaldata)</code></pre>
+<pre><code>##         date mins_on_social_media steps exercise_min sleep_min       day
+## 1 08/15/2020                  163  4321           45       462  saturday
+## 2 08/16/2020                  170  3452           44       442    sunday
+## 3 08/17/2020                  160  2109           25       380    monday
+## 4 08/18/2020                  112  1435            1       412   tuesday
+## 5 08/19/2020                  110  1236            2       352 wednesday
+## 6 08/20/2020                  115  1682            1       440  thursday</code></pre>
+<pre class="r"><code>#Wide version of dataset: 
+library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──</code></pre>
+<pre><code>## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
+## ✓ tibble  3.0.3     ✓ stringr 1.4.0
+## ✓ tidyr   1.1.1     ✓ forcats 0.5.0</code></pre>
+<pre><code>## ── Conflicts ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>finaldata %&gt;% rownames_to_column() %&gt;% gather(variable,value,-rowname) %&gt;% spread(rowname,value) -&gt; widedata</code></pre>
+<div id="i-decided-to-combine-using-the-function-full_join-because-i-knew-there-was-a-common-variable-and-that-each-x-value-would-return-y-values-with-no-nas.-before-joining-i-had-to-pipe-my-data-converting-it-into-a-matrix-then-data-frame.-next-i-used-the-full_join-function-and-combined-them-by-the-common-variable-date.-next-i-converted-all-the-varables-except-for-date-and-day-into-numeric-variables-in-order-to-be-able-to-do-the-calculations-in-the-future-codes.-i-named-the-finalized-data-as-finaldata.-lastly-i-used-the-gather-function-in-order-to-demonstrate-what-my-data-would-look-like-wide-instead-of-long-naming-this-dataset-as-widedata." class="section level5">
+<h5>I decided to combine using the function &quot;full_join&quot; because I knew there was a common variable and that each X value would return Y values with no NAs. Before joining, I had to pipe my data, converting it into a matrix then data frame. Next I used the full_join function and combined them by the common variable &quot;date&quot;. Next I converted all the varables except for &quot;date&quot; and &quot;day&quot; into numeric variables in order to be able to do the calculations in the future codes. I named the finalized data as &quot;finaldata&quot;. Lastly, I used the gather() function in order to demonstrate what my data would look like wide instead of long, naming this dataset as widedata.</h5>
+<hr />
+</div>
+</div>
+</div>
+<div id="wrangling-data" class="section level2">
+<h2>Wrangling Data</h2>
+<pre class="r"><code>library(knitr)
+finaldata %&gt;% select(-day,-date) %&gt;% summary %&gt;% kable</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">mins_on_social_media</th>
+<th align="left">steps</th>
+<th align="left">exercise_min</th>
+<th align="left">sleep_min</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Min. : 97.0</td>
+<td align="left">Min. :1198</td>
+<td align="left">Min. : 1.00</td>
+<td align="left">Min. :323.0</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">1st Qu.:118.0</td>
+<td align="left">1st Qu.:1465</td>
+<td align="left">1st Qu.: 3.00</td>
+<td align="left">1st Qu.:398.0</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Median :153.0</td>
+<td align="left">Median :2218</td>
+<td align="left">Median :25.00</td>
+<td align="left">Median :432.0</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Mean :146.2</td>
+<td align="left">Mean :2526</td>
+<td align="left">Mean :24.08</td>
+<td align="left">Mean :424.9</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">3rd Qu.:170.0</td>
+<td align="left">3rd Qu.:3510</td>
+<td align="left">3rd Qu.:41.50</td>
+<td align="left">3rd Qu.:455.5</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Max. :221.0</td>
+<td align="left">Max. :4681</td>
+<td align="left">Max. :52.00</td>
+<td align="left">Max. :498.0</td>
+</tr>
+</tbody>
+</table>
+<div id="the-table-above-summarizes-the-mean-median-min-max-1st-and-3rd-quantile-of-each-numeric-variable-not-grouped-in-any-order." class="section level4">
+<h4>The table above summarizes the mean, median, min, max, 1st and 3rd quantile of each numeric variable, not grouped in any order.</h4>
+<pre class="r"><code>#This new variable should be able to tell the reader how active I was on a particular day. The higher number will represent more active while lower will represent less active. 
+library(knitr)
+finaldata %&gt;% mutate(workout_intensity=exercise_min*steps)-&gt; finaldata 
+#General summary statistics of all numeric variables NOT grouped in any particular way
+
+#Mean of all variables 
+finaldata%&gt;% select(-day,-date) %&gt;% summarize(mean_media = mean(mins_on_social_media),
+                                         mean_sleep = mean(sleep_min),
+                                         mean_steps=mean(steps),
+                                         mean_exercise=mean(exercise_min),
+                                         mean_workoutintensity=mean(workout_intensity)) %&gt;% kable</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">mean_media</th>
+<th align="right">mean_sleep</th>
+<th align="right">mean_steps</th>
+<th align="right">mean_exercise</th>
+<th align="right">mean_workoutintensity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">146.1961</td>
+<td align="right">424.8627</td>
+<td align="right">2525.98</td>
+<td align="right">24.07843</td>
+<td align="right">80477.84</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>#sd of all variables 
+finaldata%&gt;% select(-day,-date)%&gt;% summarize(sd_media = sd(mins_on_social_media),
+                                         sd_sleep = sd(sleep_min),
+                                         sd_steps=sd(steps),
+                                         sd_exercise=sd(exercise_min),
+                                         sd_workoutintensity=sd(workout_intensity))%&gt;% kable</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">sd_media</th>
+<th align="right">sd_sleep</th>
+<th align="right">sd_steps</th>
+<th align="right">sd_exercise</th>
+<th align="right">sd_workoutintensity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">31.4611</td>
+<td align="right">40.44355</td>
+<td align="right">1108.284</td>
+<td align="right">19.05134</td>
+<td align="right">77997.64</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>#min of all variables 
+finaldata%&gt;% select(-day,-date)%&gt;%summarize(min_media = min(mins_on_social_media),
+                                         min_sleep = min(sleep_min),
+                                         min_steps=min(steps),
+                                         min_exercise=min(exercise_min),
+                                         min_workoutintensity=min(workout_intensity))%&gt;% kable</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">min_media</th>
+<th align="right">min_sleep</th>
+<th align="right">min_steps</th>
+<th align="right">min_exercise</th>
+<th align="right">min_workoutintensity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">97</td>
+<td align="right">323</td>
+<td align="right">1198</td>
+<td align="right">1</td>
+<td align="right">1324</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>#max of all variables 
+finaldata%&gt;% select(-day,-date)%&gt;%summarize(max_media = max(mins_on_social_media),
+                                         max_sleep = max(sleep_min),
+                                         max_steps=max(steps),
+                                         max_exercise=max(exercise_min),
+                                         max_workoutintensity=max(workout_intensity))%&gt;% kable</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">max_media</th>
+<th align="right">max_sleep</th>
+<th align="right">max_steps</th>
+<th align="right">max_exercise</th>
+<th align="right">max_workoutintensity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">221</td>
+<td align="right">498</td>
+<td align="right">4681</td>
+<td align="right">52</td>
+<td align="right">243412</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>#var of all variables 
+finaldata%&gt;% select(-day,-date)%&gt;%summarize(var_media = var(mins_on_social_media),
+                                         var_sleep = var(sleep_min),
+                                         var_steps=var(steps),
+                                         var_exercise=var(exercise_min),
+                                         var_workoutintensity=var(workout_intensity))%&gt;% kable</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">var_media</th>
+<th align="right">var_sleep</th>
+<th align="right">var_steps</th>
+<th align="right">var_exercise</th>
+<th align="right">var_workoutintensity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">989.8008</td>
+<td align="right">1635.681</td>
+<td align="right">1228294</td>
+<td align="right">362.9537</td>
+<td align="right">6083632283</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="in-the-data-above-i-created-a-new-variable-called-workout_intensity-by-multiplying-exercise_min-and-steps.-my-reasoning-was-that-i-tend-to-take-more-steps-whenever-i-exercise-for-longer-periods-of-time-and-vice-veras.-i-then-created-summary-tables-that-includes-the-minmaxsdvarand-mean-of-all-my-numeric-variables.-i-used-select-day-date-in-order-to-not-include-those-variables-as-they-were-not-numeric-and-would-provide-no-useful-information-in-this-situation-and-i-used-the-summarize-function-in-order-to-calcuate-the-mean-summaries-of-each-stated-individual-variable." class="section level4">
+<h4>In the data above, I created a new variable called &quot;workout_intensity&quot; by multiplying exercise_min and steps. My reasoning was that I tend to take more steps whenever I exercise for longer periods of time (and vice veras). I then created summary tables that includes the min,max,sd,var,and mean, of all my numeric variables. I used select(-day,-date) in order to not include those variables, as they were not numeric and would provide no useful information in this situation, and I used the summarize function in order to calcuate the mean summaries of each stated individual variable.</h4>
+<pre class="r"><code>library(knitr)
+
+#Mean of all variables grouped by day
+finaldata%&gt;% group_by(day) %&gt;% summarize(mean_media = mean(mins_on_social_media),
+                                         mean_sleep = mean(sleep_min),
+                                         mean_steps=mean(steps),
+                                         mean_exercise=mean(exercise_min),
+                                         mean_workoutintensity=mean(workout_intensity)) %&gt;% kable</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">day</th>
+<th align="right">mean_media</th>
+<th align="right">mean_sleep</th>
+<th align="right">mean_steps</th>
+<th align="right">mean_exercise</th>
+<th align="right">mean_workoutintensity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">friday</td>
+<td align="right">184.2857</td>
+<td align="right">453.2857</td>
+<td align="right">3147.286</td>
+<td align="right">37.714286</td>
+<td align="right">120955.286</td>
+</tr>
+<tr class="even">
+<td align="left">monday</td>
+<td align="right">157.8571</td>
+<td align="right">385.2857</td>
+<td align="right">2196.429</td>
+<td align="right">26.142857</td>
+<td align="right">57546.571</td>
+</tr>
+<tr class="odd">
+<td align="left">saturday</td>
+<td align="right">157.7500</td>
+<td align="right">464.7500</td>
+<td align="right">4249.125</td>
+<td align="right">47.125000</td>
+<td align="right">200840.250</td>
+</tr>
+<tr class="even">
+<td align="left">sunday</td>
+<td align="right">167.0000</td>
+<td align="right">452.8750</td>
+<td align="right">3361.375</td>
+<td align="right">42.250000</td>
+<td align="right">143498.875</td>
+</tr>
+<tr class="odd">
+<td align="left">thursday</td>
+<td align="right">127.8571</td>
+<td align="right">439.8571</td>
+<td align="right">1571.286</td>
+<td align="right">3.857143</td>
+<td align="right">6378.429</td>
+</tr>
+<tr class="even">
+<td align="left">tuesday</td>
+<td align="right">113.5714</td>
+<td align="right">404.2857</td>
+<td align="right">1440.000</td>
+<td align="right">3.000000</td>
+<td align="right">4478.286</td>
+</tr>
+<tr class="odd">
+<td align="left">wednesday</td>
+<td align="right">110.4286</td>
+<td align="right">364.0000</td>
+<td align="right">1350.857</td>
+<td align="right">2.571429</td>
+<td align="right">3449.571</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>#sd of all variables grouped by day
+finaldata%&gt;% group_by(day) %&gt;% summarize(sd_media = sd(mins_on_social_media),
+                                         sd_sleep = sd(sleep_min),
+                                         sd_steps=sd(steps),
+                                         sd_exercise=sd(exercise_min),
+                                         sd_workoutintensity=sd(workout_intensity))%&gt;% kable</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">day</th>
+<th align="right">sd_media</th>
+<th align="right">sd_sleep</th>
+<th align="right">sd_steps</th>
+<th align="right">sd_exercise</th>
+<th align="right">sd_workoutintensity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">friday</td>
+<td align="right">21.116457</td>
+<td align="right">25.88252</td>
+<td align="right">541.3368</td>
+<td align="right">6.343350</td>
+<td align="right">33374.474</td>
+</tr>
+<tr class="even">
+<td align="left">monday</td>
+<td align="right">12.601965</td>
+<td align="right">12.73727</td>
+<td align="right">235.6204</td>
+<td align="right">3.184785</td>
+<td align="right">10488.673</td>
+</tr>
+<tr class="odd">
+<td align="left">saturday</td>
+<td align="right">18.077215</td>
+<td align="right">14.14971</td>
+<td align="right">370.1361</td>
+<td align="right">4.015595</td>
+<td align="right">28872.878</td>
+</tr>
+<tr class="even">
+<td align="left">sunday</td>
+<td align="right">15.156328</td>
+<td align="right">20.71878</td>
+<td align="right">327.9460</td>
+<td align="right">5.522680</td>
+<td align="right">32781.165</td>
+</tr>
+<tr class="odd">
+<td align="left">thursday</td>
+<td align="right">33.553085</td>
+<td align="right">14.93797</td>
+<td align="right">195.6431</td>
+<td align="right">3.184785</td>
+<td align="right">5716.675</td>
+</tr>
+<tr class="even">
+<td align="left">tuesday</td>
+<td align="right">7.524563</td>
+<td align="right">13.86500</td>
+<td align="right">173.5511</td>
+<td align="right">1.632993</td>
+<td align="right">2871.365</td>
+</tr>
+<tr class="odd">
+<td align="left">wednesday</td>
+<td align="right">8.885515</td>
+<td align="right">25.16611</td>
+<td align="right">128.9993</td>
+<td align="right">1.272418</td>
+<td align="right">1586.710</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>#min of all variables grouped by day
+finaldata%&gt;% group_by(day) %&gt;% summarize(min_media = min(mins_on_social_media),
+                                         min_sleep = min(sleep_min),
+                                         min_steps=min(steps),
+                                         min_exercise=min(exercise_min),
+                                         min_workoutintensity=min(workout_intensity))%&gt;% kable</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">day</th>
+<th align="right">min_media</th>
+<th align="right">min_sleep</th>
+<th align="right">min_steps</th>
+<th align="right">min_exercise</th>
+<th align="right">min_workoutintensity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">friday</td>
+<td align="right">153</td>
+<td align="right">419</td>
+<td align="right">2127</td>
+<td align="right">24</td>
+<td align="right">51048</td>
+</tr>
+<tr class="even">
+<td align="left">monday</td>
+<td align="right">132</td>
+<td align="right">364</td>
+<td align="right">1768</td>
+<td align="right">23</td>
+<td align="right">44200</td>
+</tr>
+<tr class="odd">
+<td align="left">saturday</td>
+<td align="right">120</td>
+<td align="right">449</td>
+<td align="right">3672</td>
+<td align="right">40</td>
+<td align="right">146880</td>
+</tr>
+<tr class="even">
+<td align="left">sunday</td>
+<td align="right">135</td>
+<td align="right">432</td>
+<td align="right">2908</td>
+<td align="right">35</td>
+<td align="right">107596</td>
+</tr>
+<tr class="odd">
+<td align="left">thursday</td>
+<td align="right">100</td>
+<td align="right">413</td>
+<td align="right">1324</td>
+<td align="right">1</td>
+<td align="right">1324</td>
+</tr>
+<tr class="even">
+<td align="left">tuesday</td>
+<td align="right">100</td>
+<td align="right">377</td>
+<td align="right">1231</td>
+<td align="right">1</td>
+<td align="right">1327</td>
+</tr>
+<tr class="odd">
+<td align="left">wednesday</td>
+<td align="right">97</td>
+<td align="right">323</td>
+<td align="right">1198</td>
+<td align="right">1</td>
+<td align="right">1328</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>#max of all variables grouped by day
+finaldata%&gt;% group_by(day) %&gt;% summarize(max_media = max(mins_on_social_media),
+                                         max_sleep = max(sleep_min),
+                                         max_steps=max(steps),
+                                         max_exercise=max(exercise_min),
+                                         max_workoutintensity=max(workout_intensity))%&gt;% kable</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">day</th>
+<th align="right">max_media</th>
+<th align="right">max_sleep</th>
+<th align="right">max_steps</th>
+<th align="right">max_exercise</th>
+<th align="right">max_workoutintensity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">friday</td>
+<td align="right">221</td>
+<td align="right">490</td>
+<td align="right">3659</td>
+<td align="right">42</td>
+<td align="right">149898</td>
+</tr>
+<tr class="even">
+<td align="left">monday</td>
+<td align="right">170</td>
+<td align="right">401</td>
+<td align="right">2456</td>
+<td align="right">31</td>
+<td align="right">76136</td>
+</tr>
+<tr class="odd">
+<td align="left">saturday</td>
+<td align="right">179</td>
+<td align="right">490</td>
+<td align="right">4681</td>
+<td align="right">52</td>
+<td align="right">243412</td>
+</tr>
+<tr class="even">
+<td align="left">sunday</td>
+<td align="right">182</td>
+<td align="right">498</td>
+<td align="right">3892</td>
+<td align="right">50</td>
+<td align="right">194600</td>
+</tr>
+<tr class="odd">
+<td align="left">thursday</td>
+<td align="right">200</td>
+<td align="right">456</td>
+<td align="right">1782</td>
+<td align="right">10</td>
+<td align="right">17320</td>
+</tr>
+<tr class="even">
+<td align="left">tuesday</td>
+<td align="right">121</td>
+<td align="right">421</td>
+<td align="right">1734</td>
+<td align="right">5</td>
+<td align="right">8670</td>
+</tr>
+<tr class="odd">
+<td align="left">wednesday</td>
+<td align="right">123</td>
+<td align="right">398</td>
+<td align="right">1532</td>
+<td align="right">5</td>
+<td align="right">5990</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>#var of all variables grouped by day
+finaldata %&gt;% group_by(day) %&gt;% summarize(var_media = var(mins_on_social_media),
+                                         var_sleep = var(sleep_min),
+                                         var_steps=var(steps),
+                                         var_exercise=var(exercise_min),
+                                         var_workoutintensity=var(workout_intensity))%&gt;% kable</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">day</th>
+<th align="right">var_media</th>
+<th align="right">var_sleep</th>
+<th align="right">var_steps</th>
+<th align="right">var_exercise</th>
+<th align="right">var_workoutintensity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">friday</td>
+<td align="right">445.90476</td>
+<td align="right">669.9048</td>
+<td align="right">293045.57</td>
+<td align="right">40.238095</td>
+<td align="right">1113855497</td>
+</tr>
+<tr class="even">
+<td align="left">monday</td>
+<td align="right">158.80952</td>
+<td align="right">162.2381</td>
+<td align="right">55516.95</td>
+<td align="right">10.142857</td>
+<td align="right">110012267</td>
+</tr>
+<tr class="odd">
+<td align="left">saturday</td>
+<td align="right">326.78571</td>
+<td align="right">200.2143</td>
+<td align="right">137000.70</td>
+<td align="right">16.125000</td>
+<td align="right">833643090</td>
+</tr>
+<tr class="even">
+<td align="left">sunday</td>
+<td align="right">229.71429</td>
+<td align="right">429.2679</td>
+<td align="right">107548.55</td>
+<td align="right">30.500000</td>
+<td align="right">1074604791</td>
+</tr>
+<tr class="odd">
+<td align="left">thursday</td>
+<td align="right">1125.80952</td>
+<td align="right">223.1429</td>
+<td align="right">38276.24</td>
+<td align="right">10.142857</td>
+<td align="right">32680368</td>
+</tr>
+<tr class="even">
+<td align="left">tuesday</td>
+<td align="right">56.61905</td>
+<td align="right">192.2381</td>
+<td align="right">30120.00</td>
+<td align="right">2.666667</td>
+<td align="right">8244738</td>
+</tr>
+<tr class="odd">
+<td align="left">wednesday</td>
+<td align="right">78.95238</td>
+<td align="right">633.3333</td>
+<td align="right">16640.81</td>
+<td align="right">1.619048</td>
+<td align="right">2517649</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="the-tables-above-illustrates-the-meanvarminmax-and-sd-of-all-the-numeric-variables-in-my-data-grouped-by-day." class="section level4">
+<h4>The tables above illustrates the mean,var,min,max, and sd of all the numeric variables in my data grouped by day.</h4>
+</div>
+<div id="the-results-gathered-from-the-multiple-summary-tables-tell-me-that-i-tend-to-be-more-active-on-fridays-to-mondays-and-less-active-on-tuesdays-to-thursday-which-make-sense-with-my-given-schedule-of-having-to-attend-classes-on-tuesday-wednesday-and-thursday." class="section level4">
+<h4>The results gathered from the multiple summary tables tell me that I tend to be more active on fridays to mondays and less active on tuesdays to thursday, which make sense with my given schedule of having to attend classes on tuesday, wednesday, and thursday.</h4>
+<pre class="r"><code>#number of steps each day, and arranged in a descending order:  
+finaldata %&gt;% select(steps,day) %&gt;% group_by(day) %&gt;% summarize_if(is.numeric,mean) %&gt;% arrange(desc(steps))%&gt;%kable</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">day</th>
+<th align="right">steps</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">saturday</td>
+<td align="right">4249.125</td>
+</tr>
+<tr class="even">
+<td align="left">sunday</td>
+<td align="right">3361.375</td>
+</tr>
+<tr class="odd">
+<td align="left">friday</td>
+<td align="right">3147.286</td>
+</tr>
+<tr class="even">
+<td align="left">monday</td>
+<td align="right">2196.429</td>
+</tr>
+<tr class="odd">
+<td align="left">thursday</td>
+<td align="right">1571.286</td>
+</tr>
+<tr class="even">
+<td align="left">tuesday</td>
+<td align="right">1440.000</td>
+</tr>
+<tr class="odd">
+<td align="left">wednesday</td>
+<td align="right">1350.857</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>cormat&lt;-finaldata %&gt;% select_if(is.numeric)%&gt;%cor(use = &quot;pair&quot;)
+cormat</code></pre>
+<pre><code>##                      mins_on_social_media     steps exercise_min sleep_min
+## mins_on_social_media            1.0000000 0.6147220    0.7061079 0.5212419
+## steps                           0.6147220 1.0000000    0.9495612 0.6835352
+## exercise_min                    0.7061079 0.9495612    1.0000000 0.6136386
+## sleep_min                       0.5212419 0.6835352    0.6136386 1.0000000
+## workout_intensity               0.6017535 0.9890017    0.9637422 0.6524838
+##                      workout_intensity
+## mins_on_social_media         0.6017535
+## steps                        0.9890017
+## exercise_min                 0.9637422
+## sleep_min                    0.6524838
+## workout_intensity            1.0000000</code></pre>
+</div>
+<div id="for-the-last-few-codes-i-wanted-to-determine-the-which-particular-days-i-take-the-most-amount-of-steps.-based-on-the-data-generated-above-after-i-piped-my-finaldata-into-select-to-select-only-for-steps-and-day-grouping-by-day-and-arranging-them-in-a-desceding-order-based-on-steps-i-discovered-that-after-summarizing-my-numeric-variables-i-tend-to-take-the-most-number-of-steps-on-saturday-while-i-take-the-least-number-of-steps-on-wednesday.-i-also-included-a-correlation-matrix-to-see-which-variables-potentially-had-the-greatest-correlation-with-each-other.-for-this-i-pipied-my-finaldata-into-select_if-to-select-only-numeric-variations-then-use-the-function-cor-to-create-the-corlation-matrix-between-my-various-variables.-the-highest-correlation-was-between-workout-intensity-and-steps-walked-while-the-least-was-between-minutes-slept-and-minutes-spent-on-social-media." class="section level4">
+<h4>For the last few codes, I wanted to determine the which particular days I take the most amount of steps. Based on the data generated above after I piped my finaldata into select to select only for steps and day, grouping by day, and arranging them in a desceding order based on steps, I discovered that after summarizing my numeric variables, I tend to take the most number of steps on saturday while I take the least number of steps on Wednesday. I also included a correlation matrix to see which variables potentially had the greatest correlation with each other. For this, I pipied my finaldata into select_if to select only numeric variations, then use the function cor to create the corlation matrix between my various variables. The highest correlation was between workout intensity and steps walked, while the least was between minutes slept and minutes spent on social media.</h4>
+<hr />
+</div>
+</div>
+<div id="visualization" class="section level2">
+<h2>Visualization</h2>
+<pre class="r"><code>library(tidyverse)
+library(ggplot2)
+
+#Correlation image of my four varables!
+finaldata %&gt;% select_if(is.numeric)%&gt;%cor%&gt;%as.data.frame%&gt;%rownames_to_column%&gt;% pivot_longer(-1) %&gt;% 
+  ggplot(aes(rowname,name,fill=value))+geom_tile()+
+  geom_text(aes(label=round(value,3)))+ xlab(&quot;&quot;)+ylab(&quot;&quot;)+coord_fixed()+theme(axis.text.y = element_text( 
+                          angle=45),axis.text.x = element_text(angle=45))+ggtitle(&quot;Correlation Heat Map&quot;)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<div id="in-the-heatmap-presented-above-it-is-evident-that-the-two-variables-with-the-strongest-correlation-are-workout_intensity-and-steps-which-make-sense-as-workout_intensity-is-a-function-created-from-using-steps.-the-weakest-corrleation-appears-to-be-between-sleep_min-and-mins_on_social_media-which-makes-sense-as-i-usually-only-go-on-social-media-around-night-time-before-bed-and-the-longer-im-on-it-the-less-less-i-get-because-i-have-to-wake-up-at-a-certain-time-each-day." class="section level4">
+<h4>In the heatmap presented above, it is evident that the two variables with the strongest correlation are workout_intensity and steps, which make sense, as workout_intensity is a function created from using steps. The weakest corrleation appears to be between sleep_min and mins_on_social_media, which makes sense as I usually only go on social media around night time before bed and the longer I'm on it the less less I get, because I have to wake up at a certain time each day.</h4>
+<pre class="r"><code>#GGPLOT 1
+finaldata %&gt;% ggplot() + geom_point(aes(x = steps, y = exercise_min, color = day, size = 2)) +xlab(&quot;Steps per day&quot;) +ylab(&quot;Minutes exercising per day&quot;) +ggtitle(&quot;Days most active&quot;)+ 
+  scale_x_continuous(breaks = round(seq(min(finaldata$steps), max(finaldata$steps), by = 350),1)) +
+  scale_y_continuous(breaks = round(seq(min(finaldata$exercise_min), max(finaldata$exercise_min), by = 5),1))+
+  theme_bw()</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+</div>
+<div id="the-scatter-plot-maps-out-the-variables-steps-and-minutes-of-exercise-colored-coded-by-the-particular-day-of-the-week.-based-on-the-graph-there-appears-to-be-a-linear-relationship-between-steps-taken-per-day-and-the-length-of-time-i-spend-exercising-which-makes-sense-as-my-workout-routine-consist-mostly-of-running-long-distances.-additionally-the-graph-also-tells-me-that-the-days-where-i-am-most-free-schedule-wise-friday-to-monday-i-tend-to-be-the-most-active-which-makes-sense-as-during-my-busy-schools-days-tuesday-thursday-i-have-very-little-time-during-the-day-to-exercise." class="section level4">
+<h4>The scatter plot maps out the variables steps, and minutes of exercise, colored coded by the particular day of the week. Based on the graph, there appears to be a linear relationship between steps taken per day and the length of time I spend exercising, which makes sense as my workout routine consist mostly of running long distances. Additionally, the graph also tells me that the days where I am most free, schedule wise, (friday to monday) I tend to be the most active which makes sense, as during my busy schools days (tuesday-thursday) I have very little time during the day to exercise.</h4>
+<pre class="r"><code>#GGPLOT3
+finaldata %&gt;% ggplot(aes(sleep_min,mins_on_social_media, fill = day))+geom_bar(stat=&quot;summary&quot;)+facet_wrap(~day)+theme_light()</code></pre>
+<pre><code>## No summary function supplied, defaulting to `mean_se()`
+## No summary function supplied, defaulting to `mean_se()`
+## No summary function supplied, defaulting to `mean_se()`
+## No summary function supplied, defaulting to `mean_se()`
+## No summary function supplied, defaulting to `mean_se()`
+## No summary function supplied, defaulting to `mean_se()`
+## No summary function supplied, defaulting to `mean_se()`</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+</div>
+<div id="the-barplots-above-compare-amount-of-sleep-to-minutes-spent-on-social-media-faceted-by-the-particular-day.-based-on-the-data-above-one-can-see-that-i-sleep-the-most-and-spend-the-most-time-on-social-media-on-fridaysaturday-and-sunday-while-i-spend-the-least-amount-of-time-on-those-variables-on-tuesday-to-thursday." class="section level4">
+<h4>The barplots above compare amount of sleep to minutes spent on social media, faceted by the particular day. Based on the data above, one can see that I sleep the most and spend the most time on social media on friday,saturday and sunday, while I spend the least amount of time on those variables on tuesday to thursday.</h4>
+<hr />
+</div>
+</div>
+<div id="dimensionality-reduction-kmeanspam-clustering" class="section level2">
+<h2>Dimensionality Reduction: kmeans/PAM clustering</h2>
+<pre class="r"><code>library(cluster)
+kmeans1&lt;- finaldata %&gt;% select(-day,-date) %&gt;% scale %&gt;% kmeans(3)
+kmeansclust &lt;- finaldata %&gt;% mutate(cluster=as.factor(kmeans1$cluster))
+kmeansclust %&gt;% ggplot(aes(exercise_min,steps,color=cluster))+geom_point()+theme_bw() +ggtitle(&quot;Activeness&quot;)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<pre class="r"><code>#Elbow technique, determine if K=3 is adequate 
+wss&lt;-vector()
+for(i in 1:10){temp&lt;-finaldata %&gt;% select(exercise_min,steps) %&gt;% kmeans(i)
+  wss[i]&lt;-temp$tot.withinss
+  }
+ggplot()+geom_point(aes(x=1:10,y=wss))+geom_path(aes(x=1:10),y=wss)+xlab(&quot;clusters&quot;)+scale_x_continuous(breaks = 1:10)+theme_bw() </code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-10-2.png" width="672" /></p>
+<div id="here-i-first-clustered-my-data-into-3-groups-while-also-scaling-the-data.-after-naming-the-new-dataset-as-kmeans1-i-mutated-the-cluster-cloumns-so-that-they-are-represented-as-factors-naming-the-new-dataset-kmeansclust.-now-i-am-able-to-plot-my-data.-i-start-by-piping-kmeansclust-into-ggplot-where-i-explicitly-compare-exercise_min-and-steps.-i-color-them-based-on-the-clusters-the-points-fall-into.-becasuse-a-scatter-plot-is-what-i-want-i-add-geom_point-and-i-also-add-theme_bw-to-change-the-theme-of-the-graph-generated.-in-this-situation-i-generated-an-elbow-graph-and-determined-that-either-2-or-3-as-the-clustering-number-would-be-appropriate-for-this-dataset-theyre-at-the-elbow-and-with-relatively-low-wss." class="section level4">
+<h4>Here, I first clustered my data into 3 groups, while also scaling the data. After naming the new dataset as &quot;kmeans1&quot;, I mutated the cluster cloumns so that they are represented as factors, naming the new dataset kmeansclust. Now I am able to plot my data. I start by piping kmeansclust into ggplot where I explicitly compare exercise_min and steps. I color them based on the clusters the points fall into. Becasuse a scatter plot is what I want, I add geom_point and I also add theme_bw() to change the theme of the graph generated. In this situation, I generated an elbow graph and determined that either 2 or 3 as the clustering number would be appropriate for this dataset (they're at the &quot;elbow&quot; and with relatively low WSS).</h4>
+<pre class="r"><code>#Pam with 4 variables; numeric! 
+pam1&lt;-finaldata %&gt;% select(-date,-day) %&gt;% scale %&gt;% pam(k=2)
+pamclust&lt;-finaldata %&gt;% mutate(cluster=as.factor(pam1$clustering))
+pamclust%&gt;%ggplot(aes(exercise_min,steps,color=cluster))+geom_point()</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<pre class="r"><code>pamclust%&gt;%group_by(cluster) %&gt;% summarise_if(is.numeric,mean,na.rm=T)</code></pre>
+<pre><code>## # A tibble: 2 x 6
+##   cluster mins_on_social_media steps exercise_min sleep_min workout_intensity
+##   &lt;fct&gt;                  &lt;dbl&gt; &lt;dbl&gt;        &lt;dbl&gt;     &lt;dbl&gt;             &lt;dbl&gt;
+## 1 1                       168. 3462.         40.9      450.           146141.
+## 2 2                       123. 1553.          6.6      399.            12188.</code></pre>
+<pre class="r"><code>finaldata %&gt;% slice(pam1$id.med) #Final medoids </code></pre>
+<pre><code>##         date mins_on_social_media steps exercise_min sleep_min     day
+## 1 08/16/2020                  170  3452           44       442  sunday
+## 2 09/22/2020                  112  1462            3       400 tuesday
+##   workout_intensity
+## 1            151888
+## 2              4386</code></pre>
+</div>
+<div id="firstly-created-a-pam-dataset-by-piping-my-finaldata-into-select-removing-the-non-numeric-variables-and-i-chose-the-number-of-clusters-as-2.-i-then-had-to-mutate-my-cluster-cloumn-in-order-for-the-column-would-be-considered-a-factor.-i-named-this-new-dataset-as-pamclust.-i-then-pipied-the-new-dataset-into-ggplot-making-xexercise_min-and-ysteps-and-color-the-points-by-which-ever-cluster-they-belonged-to.-then-i-used-the-functions-id.med-to-determine-the-final-medoids-for-my-dataset." class="section level4">
+<h4>Firstly, created a pam dataset by piping my finaldata into select, removing the non numeric variables, and I chose the number of clusters as 2. I then had to mutate my cluster cloumn, in order for the column would be considered a factor. I named this new dataset as pamclust. I then pipied the new dataset into ggplot making x=exercise_min and y=steps, and color the points by which ever cluster they belonged to. Then I used the functions id.med to determine the final medoids for my dataset.</h4>
+<pre class="r"><code>pamclust$cluster &lt;- as.numeric(as.character(pamclust$cluster))
+pam2&lt;- pamclust %&gt;% select(-day,-date) %&gt;% scale %&gt;% pam(2)
+pam2</code></pre>
+<pre><code>## Medoids:
+##      ID mins_on_social_media      steps exercise_min  sleep_min
+## [1,]  2            0.7566144  0.8355436     1.045678  0.4237327
+## [2,] 39           -1.0869321 -0.9600250    -1.106401 -0.6147518
+##      workout_intensity    cluster
+## [1,]         0.9155425 -0.9709195
+## [2,]        -0.9755659  1.0097563
+## Clustering vector:
+##  [1] 1 1 2 2 2 2 1 1 1 1 2 2 2 1 1 1 2 2 2 2 1 1 1 1 2 2 2 1 1 1 1 2 2 2 1 1 1 2
+## [39] 2 2 2 1 1 1 2 2 2 2 1 1 1
+## Objective function:
+##    build     swap 
+## 1.591129 1.155356 
+## 
+## Available components:
+##  [1] &quot;medoids&quot;    &quot;id.med&quot;     &quot;clustering&quot; &quot;objective&quot;  &quot;isolation&quot; 
+##  [6] &quot;clusinfo&quot;   &quot;silinfo&quot;    &quot;diss&quot;       &quot;call&quot;       &quot;data&quot;</code></pre>
+</div>
+<div id="i-then-converted-that-exact-cloumn-a-numeric-column.-then-i-piped-my-pamclust-data-into-select-where-i-selected-for-only-my-numeric-variables-scaled-my-data-them-used-pam2.-i-did-this-just-to-be-consistent-with-the-slides-however-pam1-could-have-also-been-used-in-this-situation." class="section level4">
+<h4>I then converted that exact cloumn a numeric column. Then I piped my pamclust data into select, where I selected for only my numeric variables, scaled my data, them used pam(2). I did this just to be consistent with the slides; however pam1 could have also been used in this situation.</h4>
+<pre class="r"><code>#Visualize PAM
+library(plotly)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;plotly&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:ggplot2&#39;:
+## 
+##     last_plot</code></pre>
+<pre><code>## The following object is masked from &#39;package:stats&#39;:
+## 
+##     filter</code></pre>
+<pre><code>## The following object is masked from &#39;package:graphics&#39;:
+## 
+##     layout</code></pre>
+<pre class="r"><code>library(GGally)</code></pre>
+<pre><code>## Registered S3 method overwritten by &#39;GGally&#39;:
+##   method from   
+##   +.gg   ggplot2</code></pre>
+<pre class="r"><code>pamclust$cluster&lt;-as.character(pamclust$cluster)
+pamclust %&gt;% plot_ly(x=~steps,y=~exercise_min,z=~sleep_min, color= ~cluster,type = &quot;scatter3d&quot;,mode=&quot;markers&quot;) %&gt;% layout(autosize = F)</code></pre>
+<pre><code>## Warning: `arrange_()` is deprecated as of dplyr 0.7.0.
+## Please use `arrange()` instead.
+## See vignette(&#39;programming&#39;) for more help
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_warnings()` to see where this warning was generated.</code></pre>
+<pre><code>## Warning in RColorBrewer::brewer.pal(N, &quot;Set2&quot;): minimal value for n is 3, returning requested palette with 3 different levels
+
+## Warning in RColorBrewer::brewer.pal(N, &quot;Set2&quot;): minimal value for n is 3, returning requested palette with 3 different levels</code></pre>
+<div id="htmlwidget-1" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"visdat":{"4ef74e1f9eaa":["function () ","plotlyVisDat"]},"cur_data":"4ef74e1f9eaa","attrs":{"4ef74e1f9eaa":{"x":{},"y":{},"z":{},"mode":"markers","color":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"autosize":false,"scene":{"xaxis":{"title":"steps"},"yaxis":{"title":"exercise_min"},"zaxis":{"title":"sleep_min"}},"hovermode":"closest","showlegend":true},"source":"A","config":{"showSendToCloud":false},"data":[{"x":[4321,3452,3569,4672,3768,2456,3612,4681,3892,3111,4121,3147,2218,2127,3964,3278,2417,2945,3672,3245,3659,4002,2908,3008,4560,3201],"y":[45,44,42,45,50,31,38,52,50,37,45,35,30,24,50,40,23,42,40,40,40,50,37,41,50,42],"z":[462,442,452,472,451,401,490,452,438,423,478,458,392,461,490,432,398,419,449,461,452,455,443,476,460,498],"mode":"markers","type":"scatter3d","name":"1","marker":{"color":"rgba(102,194,165,1)","line":{"color":"rgba(102,194,165,1)"}},"textfont":{"color":"rgba(102,194,165,1)"},"error_y":{"color":"rgba(102,194,165,1)"},"error_x":{"color":"rgba(102,194,165,1)"},"line":{"color":"rgba(102,194,165,1)"},"frame":null},{"x":[2109,1435,1236,1682,1231,1468,1352,2316,1327,1198,1426,1582,1328,1732,1734,1532,1324,1768,1462,1257,1701,2091,1309,1437,1782],"y":[25,1,2,1,3,2,3,23,1,5,2,5,1,10,5,3,1,25,3,2,5,26,3,3,5],"z":[380,412,352,440,377,389,456,380,408,367,432,421,351,445,402,323,413,364,400,398,437,382,410,368,456],"mode":"markers","type":"scatter3d","name":"2","marker":{"color":"rgba(141,160,203,1)","line":{"color":"rgba(141,160,203,1)"}},"textfont":{"color":"rgba(141,160,203,1)"},"error_y":{"color":"rgba(141,160,203,1)"},"error_x":{"color":"rgba(141,160,203,1)"},"line":{"color":"rgba(141,160,203,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="here-i-created-a-3-d-visualization-to-compare-and-see-if-there-are-any-significant-relationships-between-the-variables-exercise_min-sleep_min-and-the-number-of-steps-i-take-per-day.-it-seems-that-there-is-a-positive-relationship-between-steps-and-minutes-slept-and-minutes-exercised-and-steps-however-there-does-not-seem-to-be-a-clear-corrleation-between-mintes-exercise-and-minutes-slept-that-day." class="section level4">
+<h4>Here I created a 3-D visualization to compare and see if there are any significant relationships between the variables exercise_min, sleep_min, and the number of steps I take per day. It seems that there is a positive relationship between steps and minutes slept, and minutes exercised and steps; however there does not seem to be a clear corrleation between mintes exercise and minutes slept that day.</h4>
+<pre class="r"><code>#visualize pairwise combinations 
+pamclust$cluster&lt;-as.character(pamclust$cluster)
+ggpairs(pamclust,columns = c(2,3,4,5),aes(color=cluster))</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+</div>
+<div id="based-on-the-plots-above-it-is-evident-that-there-is-a-strong-correlation-strongest-between-exercersie_min-and-the-number-of-steps-walked.-this-makes-sense-as-when-i-do-workout-i-always-incorporate-a-run-into-it-and-the-longer-i-workout-the-longer-i-tend-to-go-on-my-runs.-the-weakest-correlation-appears-to-be-between-sleep_min-and-mins_on_social_media-which-makes-sense-in-my-situation-because-on-night-i-tend-to-spend-more-time-on-tik-tok-and-instagram-are-the-nights-where-i-get-the-least-amount-of-sleep." class="section level4">
+<h4>Based on the plots above, it is evident that there is a strong correlation (strongest) between exercersie_min, and the number of steps walked. This makes sense as when I do workout I always incorporate a run into it, and the longer I workout the longer I tend to go on my runs. The weakest correlation appears to be between sleep_min and mins_on_social_media, which makes sense, in my situation, because on night I tend to spend more time on tik tok and instagram, are the nights where I get the least amount of sleep.</h4>
+<pre class="r"><code>#GOF test 
+pam2$silinfo$avg.width</code></pre>
+<pre><code>## [1] 0.603866</code></pre>
+<pre class="r"><code>plot(pam2,which=2)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+</div>
+<div id="here-i-determined-the-avergae-silhouette-width-based-on-the-number-of-clusters-i-chose-k2-using-the-function-silinfo-and-avg.width.i-then-created-a-silhouette-plot-of-my-pam-data.-based-on-what-weve-learned-in-class-a-silhouette-average-of-0.6-is-within-the-range-of-0.51-0.70-which-means-that-the-numbers-of-clusters-presented-is-reasonable-as-a-reasonable-structure-has-been-found" class="section level4">
+<h4>Here I determined the avergae silhouette width based on the number of clusters i chose (k=2) using the function &quot;silinfo&quot; and &quot;avg.width&quot;.I then created a silhouette plot of my pam data. Based on what we've learned in class, a silhouette average of 0.6 is within the range of 0.51-0.70, which means that the numbers of clusters presented is reasonable as a &quot;reasonable structure has been found&quot;</h4>
+<pre class="r"><code>#GOF test: is the number of clusters we chose good? 
+pam_dat&lt;-finaldata%&gt;%select(exercise_min,steps,sleep_min)
+sil_width&lt;-vector()
+for(i in 2:10){pam_fit&lt;-pam(pam_dat,k=i)
+  sil_width[i]&lt;-pam_fit$silinfo$avg.width
+  }
+ggplot()+geom_line(aes(x=1:10,y=sil_width))+scale_x_continuous(name=&quot;k&quot;,breaks = 1:10)+theme_light()</code></pre>
+<pre><code>## Warning: Removed 1 row(s) containing missing values (geom_path).</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+</div>
+<div id="based-on-the-test-conducted-above-gofsilhouette-method-it-appears-that-k2-2-clusters-is-the-best-fit-for-the-dataset-chosen-as-silhouette-width-is-the-greatest-at-k2." class="section level4">
+<h4>Based on the test conducted above (GOF/silhouette method), it appears that k=2, 2 clusters, is the best fit for the dataset chosen, as silhouette width is the greatest at k=2.</h4>
+<p>Note that the <code>echo = FALSE</code> parameter was added to the code chunk to prevent printing of the R code that generated the plot.</p>
+</div>
+</div>
 </div>
 
             

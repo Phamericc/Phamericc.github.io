@@ -1,8 +1,266 @@
 ---
 title: "Project 1"
-author: "Me"
-date: "2020-12-01"
+author: "Eric Pham"
+date: "10/10/2020"
 output: html_document
 ---
 
-## Test Project 1
+# Eric Pham edp645
+##Introduction:
+#####I decided to go with my own data, collected on my electronic devices, becasue I would like to see if there are any relationships between how much time I spend on social media, amount of steps walked per day, amount of time spent exercising per day, or amount of sleep per night, depending on the day/date. With how my schedule is now, I feel like I tend to "waste time" (Spend more time on social media and not workout, etc.) more on fridays to mondays, compared to tuesdays to thursdays (I only have classes to attend 3 days a week).  I'm interested to see if I'm actually more productive on my busy days then when I am on my relax days. 
+
+---
+
+###Importing data
+#### First, I downloaded mydata from my smart watch and iphone into my computer on google sheets, then I imported my data from google sheets into my computer as a CVS file. I then uploaded the files into r (webversion). Next I imported files into the program, where I was able to conduct my project. Next I ran "attach" in order for my newly imported files to be readable by the other codes. 
+```{r}
+library(readr)
+Apple_screen_time_Sheet1 <- read.csv("Apple screen time - Sheet1.csv")
+Apple_watch_stats_Sheet1 <- read.csv("Apple watch stats - Sheet1.csv")
+#attach(Apple_screen_time_Sheet1)
+#attach(Apple_watch_stats_Sheet1)
+```
+
+---
+
+##Tidying/Converting my data properly/Joining
+####In this chunk, I am converting my newly imported data into dataframes, by piping the name of my data files tino as.matrix function and then piping them into thee as.data.frame. I rename my new datasets as "Apple1" and "Apple2". Next I do a full join, combining them by the common variable "ID", and naming this new file "Combined_projectdat". Next, I had to converted all the variables into characters before I was able to convert only specific variables into numeric variables. I name the finalized dataset as "finaldata"
+
+```{r}
+
+library(dplyr)
+Apple_screen_time_Sheet1 %>% as.matrix %>% as.data.frame -> Apple1 
+Apple_watch_stats_Sheet1 %>% as.matrix %>% as.data.frame -> Apple2
+
+#Full joining data by common variable "date"
+full_join(Apple1, Apple2, by="date") -> Combined_dat
+Combined_dat %>% mutate_all(as.character) ->test
+column<-c("mins_on_social_media", "steps", "exercise_min", "sleep_min")
+test[, column] <- lapply(column, function(x) as.numeric(test[[x]]))
+test->finaldata
+head(finaldata)
+
+#Wide version of dataset: 
+library(tidyverse)
+finaldata %>% rownames_to_column() %>% gather(variable,value,-rowname) %>% spread(rowname,value) -> widedata
+```
+##### I decided to combine using the function "full_join" because I knew there was a common variable and that each X value would return Y values with no NAs. Before joining, I had to pipe my data, converting it into a matrix then data frame. Next I used the full_join function and combined them by the common variable "date". Next I converted all the varables except for "date" and "day" into numeric variables in order to be able to do the calculations in the future codes. I named the finalized data as "finaldata".  Lastly, I used the gather() function in order to demonstrate what my data would look like wide instead of long, naming this dataset as widedata. 
+
+---
+
+##Wrangling Data
+
+```{r}
+library(knitr)
+finaldata %>% select(-day,-date) %>% summary %>% kable
+```
+
+####The table above summarizes the mean, median, min, max, 1st and 3rd quantile of each numeric variable, not grouped in any order. 
+
+```{r}
+#This new variable should be able to tell the reader how active I was on a particular day. The higher number will represent more active while lower will represent less active. 
+library(knitr)
+finaldata %>% mutate(workout_intensity=exercise_min*steps)-> finaldata 
+#General summary statistics of all numeric variables NOT grouped in any particular way
+
+#Mean of all variables 
+finaldata%>% select(-day,-date) %>% summarize(mean_media = mean(mins_on_social_media),
+                                         mean_sleep = mean(sleep_min),
+                                         mean_steps=mean(steps),
+                                         mean_exercise=mean(exercise_min),
+                                         mean_workoutintensity=mean(workout_intensity)) %>% kable
+#sd of all variables 
+finaldata%>% select(-day,-date)%>% summarize(sd_media = sd(mins_on_social_media),
+                                         sd_sleep = sd(sleep_min),
+                                         sd_steps=sd(steps),
+                                         sd_exercise=sd(exercise_min),
+                                         sd_workoutintensity=sd(workout_intensity))%>% kable
+#min of all variables 
+finaldata%>% select(-day,-date)%>%summarize(min_media = min(mins_on_social_media),
+                                         min_sleep = min(sleep_min),
+                                         min_steps=min(steps),
+                                         min_exercise=min(exercise_min),
+                                         min_workoutintensity=min(workout_intensity))%>% kable
+
+#max of all variables 
+finaldata%>% select(-day,-date)%>%summarize(max_media = max(mins_on_social_media),
+                                         max_sleep = max(sleep_min),
+                                         max_steps=max(steps),
+                                         max_exercise=max(exercise_min),
+                                         max_workoutintensity=max(workout_intensity))%>% kable
+#var of all variables 
+finaldata%>% select(-day,-date)%>%summarize(var_media = var(mins_on_social_media),
+                                         var_sleep = var(sleep_min),
+                                         var_steps=var(steps),
+                                         var_exercise=var(exercise_min),
+                                         var_workoutintensity=var(workout_intensity))%>% kable
+```
+
+####In the data above, I created a new variable called "workout_intensity" by multiplying exercise_min and steps. My reasoning was that I tend to take more steps whenever I exercise for longer periods of time (and vice veras). I then created summary tables that includes the min,max,sd,var,and mean, of all my numeric variables. I used select(-day,-date) in order to not include those variables, as they were not numeric and would provide no useful information in this situation, and I used the summarize function in order to calcuate the mean summaries of each stated individual variable.  
+
+```{r}
+
+library(knitr)
+
+#Mean of all variables grouped by day
+finaldata%>% group_by(day) %>% summarize(mean_media = mean(mins_on_social_media),
+                                         mean_sleep = mean(sleep_min),
+                                         mean_steps=mean(steps),
+                                         mean_exercise=mean(exercise_min),
+                                         mean_workoutintensity=mean(workout_intensity)) %>% kable
+#sd of all variables grouped by day
+finaldata%>% group_by(day) %>% summarize(sd_media = sd(mins_on_social_media),
+                                         sd_sleep = sd(sleep_min),
+                                         sd_steps=sd(steps),
+                                         sd_exercise=sd(exercise_min),
+                                         sd_workoutintensity=sd(workout_intensity))%>% kable
+#min of all variables grouped by day
+finaldata%>% group_by(day) %>% summarize(min_media = min(mins_on_social_media),
+                                         min_sleep = min(sleep_min),
+                                         min_steps=min(steps),
+                                         min_exercise=min(exercise_min),
+                                         min_workoutintensity=min(workout_intensity))%>% kable
+
+#max of all variables grouped by day
+finaldata%>% group_by(day) %>% summarize(max_media = max(mins_on_social_media),
+                                         max_sleep = max(sleep_min),
+                                         max_steps=max(steps),
+                                         max_exercise=max(exercise_min),
+                                         max_workoutintensity=max(workout_intensity))%>% kable
+#var of all variables grouped by day
+finaldata %>% group_by(day) %>% summarize(var_media = var(mins_on_social_media),
+                                         var_sleep = var(sleep_min),
+                                         var_steps=var(steps),
+                                         var_exercise=var(exercise_min),
+                                         var_workoutintensity=var(workout_intensity))%>% kable
+
+```
+####The tables above illustrates the mean,var,min,max, and sd of all the numeric variables in my data grouped by day. 
+####The results gathered from the multiple summary tables tell me that I tend to be more active on fridays to mondays and less active on tuesdays to thursday, which make sense with my given schedule of having to attend classes on tuesday, wednesday, and thursday. 
+
+```{r}
+#number of steps each day, and arranged in a descending order:  
+finaldata %>% select(steps,day) %>% group_by(day) %>% summarize_if(is.numeric,mean) %>% arrange(desc(steps))%>%kable
+
+cormat<-finaldata %>% select_if(is.numeric)%>%cor(use = "pair")
+cormat
+
+```
+
+####For the last few codes, I wanted to determine the which particular days I take the most amount of steps. Based on the data generated above after I piped my finaldata into select to select only for steps and day, grouping by day, and arranging them in a desceding order based on steps, I discovered that after summarizing my numeric variables, I tend to take the most number of steps on saturday while I take the least number of steps on Wednesday. I also included a correlation matrix to see which variables potentially had the greatest correlation with each other. For this, I pipied my finaldata into select_if to select only numeric variations, then use the function cor to create the corlation matrix between my various variables. The highest correlation was between workout intensity and steps walked, while the least was between minutes slept and minutes spent on social media. 
+
+
+---
+
+##Visualization
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+
+#Correlation image of my four varables!
+finaldata %>% select_if(is.numeric)%>%cor%>%as.data.frame%>%rownames_to_column%>% pivot_longer(-1) %>% 
+  ggplot(aes(rowname,name,fill=value))+geom_tile()+
+  geom_text(aes(label=round(value,3)))+ xlab("")+ylab("")+coord_fixed()+theme(axis.text.y = element_text( 
+                          angle=45),axis.text.x = element_text(angle=45))+ggtitle("Correlation Heat Map")
+
+```
+
+####In the heatmap presented above, it is evident that the two variables with the strongest correlation are workout_intensity and steps, which make sense, as workout_intensity is a function created from using steps. The weakest corrleation appears to be between sleep_min and mins_on_social_media, which makes sense as I usually only go on social media around night time before bed and the longer I'm on it the less less I get, because I have to wake up at a certain time each day. 
+
+```{r}
+#GGPLOT 1
+finaldata %>% ggplot() + geom_point(aes(x = steps, y = exercise_min, color = day, size = 2)) +xlab("Steps per day") +ylab("Minutes exercising per day") +ggtitle("Days most active")+ 
+  scale_x_continuous(breaks = round(seq(min(finaldata$steps), max(finaldata$steps), by = 350),1)) +
+  scale_y_continuous(breaks = round(seq(min(finaldata$exercise_min), max(finaldata$exercise_min), by = 5),1))+
+  theme_bw()
+```
+
+####The scatter plot maps out the variables steps, and minutes of exercise, colored coded by the particular day of the week. Based on the graph, there appears to be a linear relationship between steps taken per day and the length of time I spend exercising, which makes sense as my workout routine consist mostly of running long distances. Additionally, the graph also tells me that the days where I am most free, schedule wise, (friday to monday) I tend to be the most active which makes sense, as during my busy schools days (tuesday-thursday) I have very little time during the day to exercise. 
+
+```{r}
+#GGPLOT3
+finaldata %>% ggplot(aes(sleep_min,mins_on_social_media, fill = day))+geom_bar(stat="summary")+facet_wrap(~day)+theme_light()
+```
+
+####The barplots above compare amount of sleep to minutes spent on social media, faceted by the particular day. Based on the data above, one can see that I sleep the most and spend the most time on social media on friday,saturday and sunday, while I spend the least amount of time on those variables on tuesday to thursday.  
+
+---
+
+##Dimensionality Reduction: kmeans/PAM clustering
+```{r}
+library(cluster)
+kmeans1<- finaldata %>% select(-day,-date) %>% scale %>% kmeans(3)
+kmeansclust <- finaldata %>% mutate(cluster=as.factor(kmeans1$cluster))
+kmeansclust %>% ggplot(aes(exercise_min,steps,color=cluster))+geom_point()+theme_bw() +ggtitle("Activeness")
+
+#Elbow technique, determine if K=3 is adequate 
+wss<-vector()
+for(i in 1:10){temp<-finaldata %>% select(exercise_min,steps) %>% kmeans(i)
+  wss[i]<-temp$tot.withinss
+  }
+ggplot()+geom_point(aes(x=1:10,y=wss))+geom_path(aes(x=1:10),y=wss)+xlab("clusters")+scale_x_continuous(breaks = 1:10)+theme_bw() 
+
+```
+
+#### Here, I first clustered my data into 3 groups, while also scaling the data. After naming the new dataset as "kmeans1", I mutated the cluster cloumns so that they are represented as factors, naming the new dataset kmeansclust. Now I am able to plot my data. I start by piping kmeansclust into ggplot where I explicitly compare exercise_min and steps. I color them based on the clusters the points fall into. Becasuse a scatter plot is what I want, I add geom_point and I also add theme_bw() to change the theme of the graph generated. In this situation, I generated an elbow graph and determined that either 2 or 3 as the clustering number would be appropriate for this dataset (they're at the "elbow" and with relatively low WSS). 
+
+```{r}
+#Pam with 4 variables; numeric! 
+pam1<-finaldata %>% select(-date,-day) %>% scale %>% pam(k=2)
+pamclust<-finaldata %>% mutate(cluster=as.factor(pam1$clustering))
+pamclust%>%ggplot(aes(exercise_min,steps,color=cluster))+geom_point()
+
+pamclust%>%group_by(cluster) %>% summarise_if(is.numeric,mean,na.rm=T)
+finaldata %>% slice(pam1$id.med) #Final medoids 
+```
+
+####Firstly, created a pam dataset by piping my finaldata into select, removing the non numeric variables, and I chose the number of clusters as 2. I then had to mutate my cluster cloumn, in order for the column would be considered a factor. I named this new dataset as pamclust. I then pipied the new dataset into ggplot making x=exercise_min and y=steps, and color the points by which ever cluster they belonged to. Then I used the functions id.med to determine the final medoids for my dataset. 
+
+```{r}
+pamclust$cluster <- as.numeric(as.character(pamclust$cluster))
+pam2<- pamclust %>% select(-day,-date) %>% scale %>% pam(2)
+pam2
+```
+
+####I then converted that exact cloumn a numeric column. Then I piped my pamclust data into select, where I selected for only my numeric variables, scaled my data, them used pam(2). I did this just to be consistent with the slides; however pam1 could have also been used in this situation. 
+
+```{r}
+#Visualize PAM
+library(plotly)
+library(GGally)
+pamclust$cluster<-as.character(pamclust$cluster)
+pamclust %>% plot_ly(x=~steps,y=~exercise_min,z=~sleep_min, color= ~cluster,type = "scatter3d",mode="markers") %>% layout(autosize = F)
+```
+
+####Here I created a 3-D visualization to compare and see if there are any significant relationships between the variables exercise_min, sleep_min, and the number of steps I take per day. It seems that there is a positive relationship between steps and minutes slept, and minutes exercised and steps; however there does not seem to be a clear corrleation between mintes exercise and minutes slept that day. 
+
+```{r}
+#visualize pairwise combinations 
+pamclust$cluster<-as.character(pamclust$cluster)
+ggpairs(pamclust,columns = c(2,3,4,5),aes(color=cluster))
+```
+
+####Based on the plots above, it is evident that there is a strong correlation (strongest) between exercersie_min, and the number of steps walked. This makes sense as when I do workout I always incorporate a run into it, and the longer I workout the longer I tend to go on my runs. The weakest correlation appears to be between sleep_min and mins_on_social_media, which makes sense, in my situation, because on night I tend to spend more time on tik tok and instagram, are the nights where I get the least amount of sleep. 
+
+```{r}
+#GOF test 
+pam2$silinfo$avg.width
+plot(pam2,which=2)
+```
+
+####Here I determined the avergae silhouette width based on the number of clusters i chose (k=2) using the function "silinfo" and "avg.width".I then created a silhouette plot of my pam data. Based on what we've learned in class, a silhouette average of 0.6 is within the range of 0.51-0.70, which means that the numbers of clusters presented is reasonable as a "reasonable structure has been found" 
+
+```{r}
+#GOF test: is the number of clusters we chose good? 
+pam_dat<-finaldata%>%select(exercise_min,steps,sleep_min)
+sil_width<-vector()
+for(i in 2:10){pam_fit<-pam(pam_dat,k=i)
+  sil_width[i]<-pam_fit$silinfo$avg.width
+  }
+ggplot()+geom_line(aes(x=1:10,y=sil_width))+scale_x_continuous(name="k",breaks = 1:10)+theme_light()
+```
+
+####Based on the test conducted above (GOF/silhouette method), it appears that k=2, 2 clusters, is the best fit for the dataset chosen, as silhouette width is the greatest at k=2. 
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

@@ -5,24 +5,23 @@
     <link>/project/</link>
     <description>Recent content in Projects on My Website</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-US</language>
-    <lastBuildDate>Tue, 01 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="/project/index.xml" rel="self" type="application/rss+xml" />
+    <language>en-US</language><atom:link href="/project/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Project 1</title>
-      <link>/project/project1/</link>
-      <pubDate>Tue, 01 Dec 2020 00:00:00 +0000</pubDate>
+      <title>FINALPROECT2</title>
+      <link>/project/project2/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/project/project1/</guid>
-      <description> Test Project 1  </description>
+      <guid>/project/project2/</guid>
+      <description>Digimon Data Data upload library(tidyverse) library(readr) Digimon &amp;lt;- read.csv(&amp;quot;DigiDB_digimonlist.csv&amp;quot;) digimon&amp;lt;-Digimon %&amp;gt;% dplyr::rename(Lv50HP = &amp;quot;Lv.50.HP&amp;quot;,Lv50SP=&amp;quot;Lv50.SP&amp;quot;,Lv50Atk=&amp;quot;Lv50.Atk&amp;quot;,Lv50Def=&amp;quot;Lv50.Def&amp;quot;,Lv50Int=&amp;quot;Lv50.Int&amp;quot;,Lv50Spd=&amp;quot;Lv50.Spd&amp;quot;) head(digimon) ## Number Digimon Stage Type Attribute Memory Equip.Slots Lv50HP Lv50SP Lv50Atk Lv50Def ## 1 1 Kuramon Baby Free Neutral 2 0 590 77 79 69 ## 2 2 Pabumon Baby Free Neutral 2 0 950 62 76 76 ## 3 3 Punimon Baby Free Neutral 2 0 870 50 97 87 ## 4 4 Botamon Baby Free Neutral 2 0 690 68 77 95 ## 5 5 Poyomon Baby Free Neutral 2 0 540 98 54 59 ## 6 6 Koromon In-Training Free Fire 3 0 940 52 109 93 ## Lv50Int Lv50Spd ## 1 68 95 ## 2 69 68 ## 3 50 75 ## 4 76 61 ## 5 95 86 ## 6 52 76 Digimon, short for “digital monsters”, is a franchise which revolves around a core mechanic of capturing, caring for and training monsters and then engaging in combat with them.</description>
     </item>
     
     <item>
-      <title>Project 2</title>
-      <link>/project/project2/</link>
-      <pubDate>Tue, 01 Dec 2020 00:00:00 +0000</pubDate>
+      <title>Project 1</title>
+      <link>/project/project1/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/project/project2/</guid>
-      <description> Test Project 2  </description>
+      <guid>/project/project1/</guid>
+      <description>Eric Pham edp645 Introduction: I decided to go with my own data, collected on my electronic devices, becasue I would like to see if there are any relationships between how much time I spend on social media, amount of steps walked per day, amount of time spent exercising per day, or amount of sleep per night, depending on the day/date. With how my schedule is now, I feel like I tend to &amp;quot;waste time&amp;quot; (Spend more time on social media and not workout, etc.</description>
     </item>
     
   </channel>

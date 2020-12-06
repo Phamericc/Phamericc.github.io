@@ -7,7 +7,7 @@
     <meta name="author" content="Eric Pham" />
     
     <link rel="shortcut icon" type="image/x-icon" href="../../img/favicon.ico">
-    <title>Project 2</title>
+    <title>FINALPROECT2</title>
     <meta name="generator" content="Hugo 0.79.0" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="../../css/main.css" />
@@ -54,13 +54,13 @@
       <div class="container">
         <div class="blog-post">
           <h3>
-            <strong><a href="../../project/project2/">Project 2</a></strong>
+            <strong><a href="../../project/project2/">FINALPROECT2</a></strong>
           </h3>
         </div>
  
 <div class="blog-title">
           <h4>
-         December 1, 2020 
+         January 1, 0001 
             &nbsp;&nbsp;
             
           </h4>
@@ -72,8 +72,745 @@
               
 
 
-<div id="test-project-2" class="section level2">
-<h2>Test Project 2</h2>
+<div id="digimon-data" class="section level2">
+<h2>Digimon Data</h2>
+<div id="data-upload" class="section level3">
+<h3>Data upload</h3>
+<pre class="r"><code>library(tidyverse)
+library(readr)
+Digimon &lt;- read.csv(&quot;DigiDB_digimonlist.csv&quot;)
+digimon&lt;-Digimon %&gt;% dplyr::rename(Lv50HP = &quot;Lv.50.HP&quot;,Lv50SP=&quot;Lv50.SP&quot;,Lv50Atk=&quot;Lv50.Atk&quot;,Lv50Def=&quot;Lv50.Def&quot;,Lv50Int=&quot;Lv50.Int&quot;,Lv50Spd=&quot;Lv50.Spd&quot;)
+head(digimon)</code></pre>
+<pre><code>## Number Digimon Stage Type Attribute Memory Equip.Slots
+Lv50HP Lv50SP Lv50Atk Lv50Def
+## 1 1 Kuramon Baby Free Neutral 2 0 590 77 79 69
+## 2 2 Pabumon Baby Free Neutral 2 0 950 62 76 76
+## 3 3 Punimon Baby Free Neutral 2 0 870 50 97 87
+## 4 4 Botamon Baby Free Neutral 2 0 690 68 77 95
+## 5 5 Poyomon Baby Free Neutral 2 0 540 98 54 59
+## 6 6 Koromon In-Training Free Fire 3 0 940 52 109 93
+## Lv50Int Lv50Spd
+## 1 68 95
+## 2 69 68
+## 3 50 75
+## 4 76 61
+## 5 95 86
+## 6 52 76</code></pre>
+<div id="digimon-short-for-digital-monsters-is-a-franchise-which-revolves-around-a-core-mechanic-of-capturing-caring-for-and-training-monsters-and-then-engaging-in-combat-with-them.-its-similar-to-pokémon.-this-dataset-contains-information-on-digimon-from-digimon-digimon-story-cyber-sleuth-released-for-playstation-vita-in-2015-and-playstation-4-in-2016.this-database-contains-three-files-a-list-of-all-the-digimon-that-can-be-captured-or-fought-in-cyber-sleuth-all-the-moves-which-digimon-can-perform-and-all-the-support-skills.-support-skills-are-a-passive-stackable-team-wide-buff.-each-species-of-digimon-is-associated-with-a-single-support-skill.-some-variables-present-in-this-dataset-include-stagetypeattributememoryhpattckand-sp-at-level-50." class="section level4">
+<h4>Digimon, short for “digital monsters”, is a franchise which revolves around a core mechanic of capturing, caring for and training monsters and then engaging in combat with them. It’s similar to Pokémon. This dataset contains information on digimon from “Digimon Digimon Story: Cyber Sleuth”, released for Playstation Vita in 2015 and Playstation 4 in 2016.This database contains three files: a list of all the digimon that can be captured or fought in Cyber Sleuth, all the moves which Digimon can perform, and all the Support Skills. (Support Skills are a passive, stackable, team-wide buff. Each species of Digimon is associated with a single Support Skill.) Some variables present in this dataset include Stage,Type,attribute,Memory,HP,Attck,and SP at level 50.</h4>
+<ul>
+<li><strong>1. (15 pts)</strong> Perform a MANOVA testing whether any of your numeric variables (or a subset of them, if including them all is unreasonable or doesn't make sense) show a mean difference across levels of one of your categorical variables (3). If they do, perform univariate ANOVAs to find response(s) showing a mean difference across groups (3), and perform post-hoc t tests to find which groups differ (3). Discuss the number of tests you have performed, calculate the probability of at least one type I error (if unadjusted), and adjust the significance level accordingly (bonferroni correction) before discussing significant differences (3). Briefly discuss MANOVA assumptions and whether or not they are likely to have been met (no need for anything too in-depth) (2).</li>
+</ul>
+<pre class="r"><code>#Actual MANOVA
+man1&lt;-manova(cbind(Lv50HP,Lv50SP,Lv50Atk, Lv50Def, Lv50Int, Lv50Spd)~Attribute, data=digimon)
+summary(man1)</code></pre>
+<pre><code>## Df Pillai approx F num Df den Df Pr(&gt;F)
+## Attribute 8 0.75854 4.3416 48 1440 &lt; 2.2e-16 ***
+## Residuals 240
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1</code></pre>
+<pre class="r"><code>#Mean values in each group
+digimon%&gt;%group_by(Attribute)%&gt;%summarize(mean(Lv50HP),mean(Lv50SP),mean(Lv50Atk),mean(Lv50Def),mean(Lv50Int),mean(Lv50Spd))%&gt;%kable#Mean values of each attribute in each combat stat category</code></pre>
+<table style="width:100%;">
+<colgroup>
+<col width="11%" />
+<col width="14%" />
+<col width="14%" />
+<col width="15%" />
+<col width="15%" />
+<col width="15%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Attribute</th>
+<th align="right">mean(Lv50HP)</th>
+<th align="right">mean(Lv50SP)</th>
+<th align="right">mean(Lv50Atk)</th>
+<th align="right">mean(Lv50Def)</th>
+<th align="right">mean(Lv50Int)</th>
+<th align="right">mean(Lv50Spd)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Dark</td>
+<td align="right">1180.000</td>
+<td align="right">128.35135</td>
+<td align="right">129.32432</td>
+<td align="right">106.7568</td>
+<td align="right">136.48649</td>
+<td align="right">131.8649</td>
+</tr>
+<tr class="even">
+<td align="left">Earth</td>
+<td align="right">1282.083</td>
+<td align="right">93.37500</td>
+<td align="right">129.20833</td>
+<td align="right">131.6667</td>
+<td align="right">89.91667</td>
+<td align="right">106.8333</td>
+</tr>
+<tr class="odd">
+<td align="left">Electric</td>
+<td align="right">1222.400</td>
+<td align="right">105.80000</td>
+<td align="right">131.92000</td>
+<td align="right">137.2800</td>
+<td align="right">110.60000</td>
+<td align="right">116.1600</td>
+</tr>
+<tr class="even">
+<td align="left">Fire</td>
+<td align="right">1287.576</td>
+<td align="right">91.54545</td>
+<td align="right">142.18182</td>
+<td align="right">114.9697</td>
+<td align="right">86.75758</td>
+<td align="right">119.0606</td>
+</tr>
+<tr class="odd">
+<td align="left">Light</td>
+<td align="right">1152.759</td>
+<td align="right">137.03448</td>
+<td align="right">111.24138</td>
+<td align="right">118.6552</td>
+<td align="right">145.89655</td>
+<td align="right">134.1379</td>
+</tr>
+<tr class="even">
+<td align="left">Neutral</td>
+<td align="right">1172.143</td>
+<td align="right">100.57143</td>
+<td align="right">126.57143</td>
+<td align="right">112.1786</td>
+<td align="right">99.14286</td>
+<td align="right">113.0000</td>
+</tr>
+<tr class="odd">
+<td align="left">Plant</td>
+<td align="right">1199.200</td>
+<td align="right">100.52000</td>
+<td align="right">110.08000</td>
+<td align="right">116.0000</td>
+<td align="right">109.92000</td>
+<td align="right">104.9600</td>
+</tr>
+<tr class="even">
+<td align="left">Water</td>
+<td align="right">1271.667</td>
+<td align="right">115.83333</td>
+<td align="right">97.95833</td>
+<td align="right">110.0000</td>
+<td align="right">128.00000</td>
+<td align="right">106.9167</td>
+</tr>
+<tr class="odd">
+<td align="left">Wind</td>
+<td align="right">1136.667</td>
+<td align="right">108.16667</td>
+<td align="right">135.66667</td>
+<td align="right">105.0000</td>
+<td align="right">99.33333</td>
+<td align="right">144.1667</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="the-manova-calulated-above-was-significant.-from-the-manova-significant-differences-were-found-among-the-numeric-variables-for-at-least-one-of-the-dependent-variables-pillai-trace-0.75854-approx-f-4.3416-with-a-p-value-2.2e-16.-becasue-of-our-results-we-will-continue-and-run-anovas-for-the-varaibles.-the-table-above-demonstrates-the-mean-different-of-numeric-variables-in-each-attribute-group." class="section level4">
+<h4>The MANOVA calulated above was significant. From the MANOVA, significant differences were found among the numeric variables for at least one of the dependent variables, Pillai trace = 0.75854, approx F = 4.3416, with a p-value &lt;2.2e-16. Becasue of our results, we will continue and run ANOVAs for the varaibles. The table above demonstrates the mean different of numeric variables in each attribute group.</h4>
+<pre class="r"><code>#ANOVAs
+summary.aov(man1) #All significantly different, except for Lv50HP </code></pre>
+<pre><code>## Response Lv50HP :
+## Df Sum Sq Mean Sq F value Pr(&gt;F)
+## Attribute 8 718646 89831 0.8404 0.5679
+## Residuals 240 25654359 106893
+##
+## Response Lv50SP :
+## Df Sum Sq Mean Sq F value Pr(&gt;F)
+## Attribute 8 57590 7198.7 8.4849 3.709e-10 ***
+## Residuals 240 203621 848.4
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1
+##
+## Response Lv50Atk :
+## Df Sum Sq Mean Sq F value Pr(&gt;F)
+## Attribute 8 43403 5425.4 2.7519 0.006336 **
+## Residuals 240 473169 1971.5
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1
+##
+## Response Lv50Def :
+## Df Sum Sq Mean Sq F value Pr(&gt;F)
+## Attribute 8 24754 3094.21 3.2105 0.001746 **
+## Residuals 240 231309 963.79
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1
+##
+## Response Lv50Int :
+## Df Sum Sq Mean Sq F value Pr(&gt;F)
+## Attribute 8 102915 12864.4 9.4853 2.185e-11 ***
+## Residuals 240 325498 1356.2
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1
+##
+## Response Lv50Spd :
+## Df Sum Sq Mean Sq F value Pr(&gt;F)
+## Attribute 8 40675 5084.4 5.4615 2.441e-06 ***
+## Residuals 240 223428 931.0
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1</code></pre>
+</div>
+<div id="after-performing-anovas-to-test-whether-my-numeric-variables-lv50hplv50splv50atk-lv50def-lv50int-lv50spd-showed-a-mean-difference-across-attributes.-it-was-determined-through-the-anova-tests-that-each-numeric-variable-differed-in-each-attribute-group-significantly-except-for-lv50hp-not-significant.-post-hoc-tests-will-be-administered-to-all-significant-variables-excluding-lv50hp." class="section level4">
+<h4>After performing ANOVAs to test whether my numeric variables Lv50HP,Lv50SP,Lv50Atk, Lv50Def, Lv50Int, Lv50Spd, showed a mean difference across attributes. It was determined through the ANOVA tests that each numeric variable differed in each attribute group significantly, except for Lv50HP (Not significant). Post-Hoc tests will be administered to all significant variables (excluding Lv50HP).</h4>
+<pre class="r"><code>#Post-Hoc tests
+pairwise.t.test(digimon$Lv50SP, digimon$Attribute, p.adj = &quot;none&quot;)</code></pre>
+<pre><code>##
+## Pairwise comparisons using t tests with pooled SD
+##
+## data: digimon$Lv50SP and digimon$Attribute
+##
+## Dark Earth Electric Fire Light Neutral Plant Water
+## Earth 7.4e-06 - - - - - - -
+## Electric 0.00308 0.13683 - - - - - -
+## Fire 2.9e-07 0.81508 0.06617 - - - - -
+## Light 0.23055 1.4e-07 0.00011 3.5e-09 - - - -
+## Neutral 0.00018 0.37534 0.51479 0.22899 3.9e-06 - - -
+## Plant 0.00028 0.39154 0.52221 0.24637 7.0e-06 0.99489 -
+-
+## Water 0.10237 0.00808 0.22925 0.00211 0.00889 0.06083
+0.06705 -
+## Wind 0.00873 0.07983 0.77641 0.03443 0.00040 0.34950
+0.35921 0.36280
+##
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>pairwise.t.test(digimon$Lv50Atk, digimon$Attribute, p.adj = &quot;none&quot;)</code></pre>
+<pre><code>##
+## Pairwise comparisons using t tests with pooled SD
+##
+## data: digimon$Lv50Atk and digimon$Attribute
+##
+## Dark Earth Electric Fire Light Neutral Plant Water
+## Earth 0.99206 - - - - - - -
+## Electric 0.82155 0.83096 - - - - - -
+## Fire 0.22771 0.27719 0.38428 - - - - -
+## Light 0.10188 0.14386 0.08922 0.00665 - - - -
+## Neutral 0.80472 0.83113 0.66195 0.17250 0.19379 - - -
+## Plant 0.09542 0.13300 0.08331 0.00687 0.92373 0.17835 -
+-
+## Water 0.00753 0.01549 0.00795 0.00026 0.27942 0.02137
+0.34039 -
+## Wind 0.58627 0.61482 0.76804 0.58492 0.04735 0.46223
+0.04487 0.00358
+##
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>pairwise.t.test(digimon$Lv50Def, digimon$Attribute, p.adj = &quot;none&quot;)</code></pre>
+<pre><code>##
+## Pairwise comparisons using t tests with pooled SD
+##
+## data: digimon$Lv50Def and digimon$Attribute
+##
+## Dark Earth Electric Fire Light Neutral Plant Water
+## Earth 0.00245 - - - - - - -
+## Electric 0.00019 0.52752 - - - - - -
+## Fire 0.27032 0.04611 0.00721 - - - - -
+## Light 0.12358 0.13013 0.02889 0.64135 - - - -
+## Neutral 0.48633 0.02493 0.00362 0.72671 0.43182 - - -
+## Plant 0.25128 0.07869 0.01611 0.90050 0.75426 0.65503 -
+-
+## Water 0.69055 0.01637 0.00235 0.55126 0.31337 0.80105
+0.49950 -
+## Wind 0.82925 0.00322 0.00034 0.23246 0.11226 0.40666
+0.21623 0.57742
+##
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>pairwise.t.test(digimon$Lv50Int , digimon$Attribute, p.adj = &quot;none&quot;)</code></pre>
+<pre><code>##
+## Pairwise comparisons using t tests with pooled SD
+##
+## data: digimon$Lv50Int and digimon$Attribute
+##
+## Dark Earth Electric Fire Light Neutral Plant Water
+## Earth 2.5e-06 - - - - - - -
+## Electric 0.00711 0.05053 - - - - - -
+## Fire 4.8e-08 0.74943 0.01534 - - - - -
+## Light 0.30392 9.3e-08 0.00053 1.3e-09 - - - -
+## Neutral 7.0e-05 0.36870 0.25934 0.19182 2.9e-06 - - -
+## Plant 0.00576 0.05854 0.94800 0.01848 0.00042 0.28861 -
+-
+## Water 0.38016 0.00041 0.09957 4.2e-05 0.07951 0.00525
+0.08710 -
+## Wind 0.00015 0.37663 0.28545 0.20429 7.4e-06 0.98518
+0.31546 0.00750
+##
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>pairwise.t.test(digimon$Lv50Spd, digimon$Attribute, p.adj = &quot;none&quot;)</code></pre>
+<pre><code>##
+## Pairwise comparisons using t tests with pooled SD
+##
+## data: digimon$Lv50Spd and digimon$Attribute
+##
+## Dark Earth Electric Fire Light Neutral Plant Water
+## Earth 0.00196 - - - - - - -
+## Electric 0.04793 0.28585 - - - - - -
+## Fire 0.08094 0.13654 0.72025 - - - - -
+## Light 0.76414 0.00135 0.03184 0.05338 - - - -
+## Neutral 0.01427 0.46821 0.70696 0.44024 0.00949 - - -
+## Plant 0.00077 0.83007 0.19560 0.08262 0.00055 0.33921 -
+-
+## Water 0.00203 0.99246 0.29017 0.13922 0.00140 0.47423
+0.82263 -
+## Wind 0.12529 3.2e-05 0.00150 0.00241 0.23479 0.00030
+1.1e-05 3.3e-05
+##
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>#Prob of at least one type I errir is
+1-(0.95^187)   </code></pre>
+<pre><code>## [1] 0.9999317</code></pre>
+<pre class="r"><code>#Bonferroni correction
+0.05/187 #Alpha/Number of test</code></pre>
+<pre><code>## [1] 0.0002673797</code></pre>
+</div>
+<div id="becasue-187-tests-were-conducted-the-probability-of-a-type-i-error-is-99.99317-and-the-bonferronic-correction-was-calculated-to-be-0.00027.-with-the-new-bonferroni-alpha-level-as-0.00027-a-great-majority-of-the-groups-that-was-once-significant-became-non-significant." class="section level4">
+<h4>Becasue 187 tests were conducted, the probability of a Type I error is 99.99317, and the bonferronic correction was calculated to be 0.00027. With the new bonferroni alpha level as 0.00027, a great majority of the groups that was once significant, became non-significant.</h4>
+<pre class="r"><code>#Checking for MANOVA assumptions
+library(rstatix)
+group &lt;- digimon$Attribute 
+DVs &lt;- digimon %&gt;% select(Lv50SP,Lv50Atk,Lv50Def,Lv50Int,Lv50Spd)
+sapply(split(DVs,group), mshapiro_test)</code></pre>
+<pre><code>## Dark Earth Electric Fire Light Neutral Plant
+## statistic 0.8402922 0.6789064 0.8272296 0.824353
+0.9185112 0.6665295 0.8462331
+## p.value 9.416849e-05 5.366875e-06 0.0006707578
+9.747343e-05 0.02795997 9.919731e-07 0.001495115
+## Water Wind
+## statistic 0.6870735 0.8356848
+## p.value 6.828456e-06 0.001199333</code></pre>
+</div>
+<div id="assumptions-for-my-data-was-not-met-with-the-following-variables-because-light-was-determined-to-not-be-significant.-in-theory-because-one-of-my-variables-p-value-was-less-than-0.05-i-would-not-proceed-any-further-testing-the-homogeneit-or-covariance-matrices." class="section level4">
+<h4>Assumptions for my data was not met with the following variables because &quot;Light&quot; was determined to not be significant. In theory, because one of my variable's p-value was less than 0.05 I would not proceed any further testing the homogeneit or covariance matrices.</h4>
+<ul>
+<li><strong>2. (10 pts)</strong> Perform some kind of randomization test on your data (that makes sense). The statistic can be anything you want (mean difference, correlation, F-statistic/ANOVA, chi-squared), etc. State null and alternative hypotheses, perform the test, and interpret the results (7). Create a plot visualizing the null distribution and the test statistic (3).</li>
+</ul>
+<pre class="r"><code>library(dplyr)
+mutated&lt;-digimon
+mutated &lt;- mutate(digimon, y = ifelse(Type == &quot;Virus&quot;, 1, 0))
+mutated%&gt;%group_by(y)%&gt;%summarize(means=mean(Lv50Atk))%&gt;%summarize(diff(means))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `diff(means)`
+##           &lt;dbl&gt;
+## 1          8.83</code></pre>
+<pre class="r"><code>ggplot(mutated,aes(Lv50Atk,fill=y))+geom_histogram(bins=6.5)+
+facet_wrap(~y,ncol=2)+theme(legend.position=&quot;none&quot;)</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-6-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="for-this-question-i-will-be-conducting-a-randomization-tests-of-differences-of-means-to-see-if-mean-power-level-between-two-groups-differ-significantly.-h0-there-is-no-significant-difference-in-mean-attack-power-level-between-virus-type-digimon-and-the-other-types-of-digimon.-ha-there-is-a-significant-difference-in-mean-attack-power-level-between-virus-type-digimon-and-the-other-types-of-digimon.-firstly-the-mean-difference-of-attack-power-at-level-50-between-virus-type-digimon-and-the-other-type-of-digimon-was-calculated-to-be-8.828246.-also-a-graph-depicting-the-two-groups-is-illustrated-above.-the-1-represents-the-virus-type-digimon-attack-power-and-the-0-represents-the-other-type-of-digimons-attack-power." class="section level4">
+<h4>For this question, I will be conducting a randomization tests of differences of means to see if mean power level between two groups differ significantly. H0= There is no significant difference in mean attack power level between virus type digimon and the other types of digimon. HA: There is a significant difference in mean attack power level between virus type digimon and the other types of digimon. Firstly, the mean difference of attack power at level 50 between virus type digimon and the other type of digimon was calculated to be 8.828246. Also a graph depicting the two groups is illustrated above. The &quot;1&quot; represents the virus type digimon attack power and the &quot;0&quot; represents the other type of digimon's attack power.</h4>
+<pre class="r"><code>set.seed(1234)
+rand_dist&lt;-vector()
+for(i in 1:5000){
+new&lt;-data.frame(Lv50atk=sample(mutated$Lv50Atk),y=mutated$y)
+rand_dist[i]&lt;-mean(new[new$y==&quot;1&quot;,]$Lv50atk)-
+mean(new[new$y==&quot;0&quot;,]$Lv50atk)}
+
+{hist(rand_dist,main=&quot;&quot;,ylab=&quot;&quot;); abline(v = c(-8.828246, 8.828246),col=&quot;red&quot;)}</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-7-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="after-conducting-a-randomization-tests-for-the-mean-difference-between-the-two-groups-a-graph-was-created-to-track-all-the-possible-mean-difference-variations." class="section level4">
+<h4>After conducting a randomization tests for the mean difference between the two groups, a graph was created to track all the possible mean difference variations.</h4>
+<pre class="r"><code>mean(rand_dist&gt;8.828246 | rand_dist &lt; -8.828246)</code></pre>
+<pre><code>## [1] 0.1516</code></pre>
+</div>
+<div id="the-calculated-p-value-for-the-data-above-was-calculated-to-be-0.1518-which-is-greater-than-the-alpha-0.05-which-means-that-we-fail-to-reject-the-null-hypothesis.-there-appears-to-be-no-significant-difference-between-the-mean-power-levels-of-the-two-different-groups." class="section level4">
+<h4>The calculated P-value for the data above was calculated to be 0.1518, which is greater than the alpha (0.05), which means that we fail to reject the null hypothesis. There appears to be no significant difference between the mean power levels of the two different groups.</h4>
+<ul>
+<li><p><strong>3. (35 pts)</strong> Build a linear regression model predicting one of your response variables from at least 2 other variables, including their interaction. Mean-center any numeric variables involved in the interaction.</p>
+<ul>
+<li>Interpret the coefficient estimates (do not discuss significance) (10)</li>
+<li>Plot the regression using <code>ggplot()</code> using geom_smooth(method=&quot;lm&quot;). If your interaction is numeric by numeric, refer to code in the slides to make the plot or check out the <code>interactions</code> package, which makes this easier. If you have 3 or more predictors, just chose two of them to plot for convenience. (8)</li>
+<li>Check assumptions of linearity, normality, and homoskedasticity either graphically or using a hypothesis test (4)</li>
+<li>Regardless, recompute regression results with robust standard errors via <code>coeftest(..., vcov=vcovHC(...))</code>. Discuss significance of results, including any changes from before/after robust SEs if applicable. (8)</li>
+<li>What proportion of the variation in the outcome does your model explain? (4)</li>
+</ul></li>
+</ul>
+<pre class="r"><code>library(sandwich); library(lmtest)
+digimon1&lt;-digimon
+#Center grabbed speed and attack power
+digimon1$spd_c&lt;-digimon1$Lv50Spd-mean(digimon1$Lv50Spd,na.rm=T)
+digimon1$atk_c&lt;-digimon1$Lv50Atk-mean(digimon1$Lv50Atk,na.rm=T)
+#Linear regression 
+fit00&lt;-lm(spd_c~atk_c*Type,data=digimon1)
+summary(fit00) #Multiple R-squared: 0.3293</code></pre>
+<pre><code>##
+## Call:
+## lm(formula = spd_c ~ atk_c * Type, data = digimon1)
+##
+## Residuals:
+## Min 1Q Median 3Q Max
+## -43.12 -20.96 -4.74 16.60 79.36
+##
+## Coefficients:
+## Estimate Std. Error t value Pr(&gt;|t|)
+## (Intercept) 5.81159 3.51785 1.652 0.0998 .
+## atk_c 0.36049 0.08547 4.218 3.49e-05 ***
+## TypeFree -13.00375 5.85168 -2.222 0.0272 *
+## TypeVaccine 0.85297 4.79021 0.178 0.8588
+## TypeVirus -10.78397 4.63458 -2.327 0.0208 *
+## atk_c:TypeFree 0.22776 0.13419 1.697 0.0909 .
+## atk_c:TypeVaccine -0.04400 0.11006 -0.400 0.6897
+## atk_c:TypeVirus -0.02929 0.10644 -0.275 0.7835
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1
+##
+## Residual standard error: 27.11 on 241 degrees of freedom
+## Multiple R-squared: 0.3293, Adjusted R-squared: 0.3099
+## F-statistic: 16.91 on 7 and 241 DF, p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div id="based-on-the-results-for-every-one-unit-increase-in-atk_c-controlling-for-type-spd_c-is-likely-to-increase-by-0.36.-if-the-digimon-is-a-free-type-with-average-attack-then-the-speed-will-decrease-by--13.004.-if-the-digimon-is-a-vaccine-type-with-average-attack-then-the-speed-will-increase-by-0.853.-if-the-digimon-is-a-virus-type-with-average-attack-then-the-speed-of-it-will-decrease-by--10.78.-for-the-atk_ctypefree-coefficient-if-a-digimon-is-a-free-type-then-for-every-1-unit-increase-in-atk_c-the-spd_c-will-increase-by-0.228.-for-the-atk_ctypevaccine-coefficient-if-the-digimon-is-a-vaccine-type-then-for-every-1-unit-increase-in-atk_c-the-spd_c-will-decrease-by--0.044.-lastly-for-virus-type-digimon-for-every-1-unit-increase-in-atk_c-spd_c-will-decrease-by--0.0293." class="section level4">
+<h4>Based on the results, for every one unit increase in atk_c, controlling for Type, spd_c is likely to increase by 0.36. If the digimon is a Free type, with average attack, then the speed will decrease by -13.004. If the digimon is a vaccine type with average attack, then the speed will increase by 0.853. If the digimon is a virus type, with average attack, then the speed of it will decrease by -10.78. For the atk_c:TypeFree coefficient, if a digimon is a free type, then for every 1 unit increase in atk_c, the spd_c will increase by 0.228. For the atk_c:TypeVaccine coefficient, if the digimon is a vaccine type, then for every 1 unit increase in atk_c, the spd_c will decrease by -0.044. Lastly, for virus type digimon, for every 1 unit increase in atk_c, spd_c will decrease by -0.0293.</h4>
+<pre class="r"><code>#Regression plot 
+ggplot(digimon1, aes(spd_c,atk_c, color = Type))+geom_point(aes(color=Type))+geom_smooth(method=&quot;lm&quot;)</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-10-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="the-graph-above-illustrates-speed-spd_c-and-type-and-their-effects-on-attack-power-atk_c" class="section level4">
+<h4>The graph above illustrates speed (spd_c) and type, and their effects on attack power (atk_c)</h4>
+</div>
+</div>
+<div id="checking-assumptions" class="section level3">
+<h3>Checking assumptions:</h3>
+<pre class="r"><code>resids&lt;-lm(spd_c~atk_c*Type,data=digimon1)$residuals
+ggplot()+geom_histogram(aes(resids),bins=10)</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-11-1.png" width="768" style="display: block; margin: auto;" /></p>
+<div id="the-histogram-produced-above-appears-to-be-skewed-possible-violation." class="section level4">
+<h4>The histogram produced above appears to be skewed (Possible violation).</h4>
+<pre class="r"><code>fitted&lt;-lm(spd_c~atk_c*Type,data=digimon1)$fitted.values
+ggplot()+geom_point(aes(fitted,resids))</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-12-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="variance-does-not-look-too-constant-based-on-the-graph-above-possible-violation." class="section level4">
+<h4>Variance does not look too constant based on the graph above (Possible violation).</h4>
+<pre class="r"><code>ggplot(digimon1,aes(Lv50Atk,Lv50Spd,color=Type))+geom_point()</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-13-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="appears-to-be-a-fanning-pattern-based-on-the-graph-above-which-would-violate-the-homoskedasticity-assumption." class="section level4">
+<h4>Appears to be a fanning pattern based on the graph above, which would violate the homoskedasticity assumption.</h4>
+<pre class="r"><code>coeftest(fit00)</code></pre>
+<pre><code>##
+## t test of coefficients:
+##
+## Estimate Std. Error t value Pr(&gt;|t|)
+## (Intercept) 5.811585 3.517849 1.6520 0.09983 .
+## atk_c 0.360486 0.085469 4.2178 3.494e-05 ***
+## TypeFree -13.003748 5.851680 -2.2222 0.02720 *
+## TypeVaccine 0.852973 4.790212 0.1781 0.85882
+## TypeVirus -10.783969 4.634580 -2.3268 0.02080 *
+## atk_c:TypeFree 0.227755 0.134193 1.6972 0.09095 .
+## atk_c:TypeVaccine -0.043996 0.110063 -0.3997 0.68970
+## atk_c:TypeVirus -0.029286 0.106444 -0.2751 0.78345
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1</code></pre>
+<pre class="r"><code>coeftest(fit00, vcov = vcovHC(fit00))</code></pre>
+<pre><code>##
+## t test of coefficients:
+##
+## Estimate Std. Error t value Pr(&gt;|t|)
+## (Intercept) 5.811585 4.138519 1.4043 0.16153
+## atk_c 0.360486 0.086209 4.1815 4.055e-05 ***
+## TypeFree -13.003748 5.439990 -2.3904 0.01760 *
+## TypeVaccine 0.852973 5.404247 0.1578 0.87472
+## TypeVirus -10.783969 5.009040 -2.1529 0.03232 *
+## atk_c:TypeFree 0.227755 0.103412 2.2024 0.02858 *
+## atk_c:TypeVaccine -0.043996 0.101113 -0.4351 0.66387
+## atk_c:TypeVirus -0.029286 0.099783 -0.2935 0.76939
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1</code></pre>
+</div>
+<div id="after-computing-robust-ses-everything-remained-the-same-except-for-atk_ctypefree-which-went-from-non-significant-to-significant.-all-coefficients-reamined-very-similar-to-the-origianl-coefficients.-my-models-adjusted-r-value-was-calculated-to-be-0.3099-this-is-the-proprotion-of-variation-in-the-response-variable-explianed-by-the-overall-model." class="section level4">
+<h4>After computing robust SEs, everything remained the same, except for atk_c:TypeFree, which went from non-significant to significant. All coefficients reamined very similar to the origianl coefficients. My model's adjusted R value was calculated to be 0.3099 ( This is the proprotion of variation in the response variable explianed by the overall model).</h4>
+<ul>
+<li><strong>4. (5 pts)</strong> Rerun same regression model (with the interaction), but this time compute bootstrapped standard errors (either by resampling observations or residuals). Discuss any changes you observe in SEs and p-values using these SEs compared to the original SEs and the robust SEs)</li>
+</ul>
+<pre class="r"><code>#BootstrappedSEs
+set.seed(1234)
+boot_dat&lt;- sample_frac(digimon1, replace=T)
+samp_distn&lt;-replicate(5000, {
+boot_dat &lt;- sample_frac(digimon1, replace=T) #take bootstrap sample of rows
+fit &lt;- lm(spd_c~atk_c*Type,data=boot_dat) #fit model on bootstrap sample
+coef(fit) #save coefs
+})
+# Estimated Boostrapped SEs
+samp_distn %&gt;% t %&gt;% as.data.frame %&gt;% summarize_all(sd) %&gt;% round(3)</code></pre>
+<pre><code>## (Intercept) atk_c TypeFree TypeVaccine TypeVirus
+atk_c:TypeFree atk_c:TypeVaccine atk_c:TypeVirus
+## 1 4.102 0.088 5.463 5.338 4.927 0.108 0.105 0.101</code></pre>
+</div>
+<div id="after-running-the-same-regression-model-with-interactionhowever-using-the-bootstrapped-standard-errors-by-resampling-observations-there-were-changes-to-the-ses-of-the-variables.-the-intercept-changed-to-4.097-and-some-other-changes-include-atk_c0.086-typefree5.463-typevaccine5.281-typevirus4.926-atk_ctypefree0.105-atk_ctypevaccine0.101-and-atk_ctypevirus0.099." class="section level4">
+<h4>After running the same regression model with interaction;however, using the bootstrapped standard errors by resampling observations, there were changes to the SEs of the variables. The intercept changed to 4.097, and some other changes include atk_c=0.086, TypeFree=5.463, TypeVaccine=5.281, TypeVirus=4.926 , atk_c:TypeFree=0.105, atk_c:TypeVaccine=0.101, and atk_c:TypeVirus=0.099.</h4>
+<ul>
+<li><p><strong>5. (25 pts)</strong> Fit a logistic regression model predicting a binary variable (if you don't have one, make/get one) from at least two explanatory variables (interaction not necessary).</p>
+<ul>
+<li>Interpret coefficient estimates in context (10)</li>
+<li>Report a confusion matrix for your logistic regression (2)</li>
+<li>Compute and discuss the Accuracy, Sensitivity (TPR), Specificity (TNR), Precision (PPV), and AUC of your model (5)</li>
+<li>Using ggplot, make a density plot of the log-odds (logit) colored/grouped by your binary outcome variable (3)</li>
+<li>Generate an ROC curve (plot) and calculate AUC (either manually or with a package); interpret (5)</li>
+</ul></li>
+</ul>
+<pre class="r"><code>class_diag &lt;- function(probs,truth){
+#CONFUSION MATRIX: CALCULATE ACCURACY, TPR, TNR, PPV
+tab&lt;-table(factor(probs&gt;.5,levels=c(&quot;FALSE&quot;,&quot;TRUE&quot;)),truth)
+acc=sum(diag(tab))/sum(tab)
+sens=tab[2,2]/colSums(tab)[2]
+spec=tab[1,1]/colSums(tab)[1]
+ppv=tab[2,2]/rowSums(tab)[2]
+f1=2*(sens*ppv)/(sens+ppv)
+if(is.numeric(truth)==FALSE &amp; is.logical(truth)==FALSE) truth&lt;-as.numeric(truth)-1
+#CALCULATE EXACT AUC
+ord&lt;-order(probs, decreasing=TRUE)
+probs &lt;- probs[ord]; truth &lt;- truth[ord]
+TPR=cumsum(truth)/max(1,sum(truth))
+FPR=cumsum(!truth)/max(1,sum(!truth))
+dup&lt;-c(probs[-1]&gt;=probs[-length(probs)], FALSE)
+TPR&lt;-c(0,TPR[!dup],1); FPR&lt;-c(0,FPR[!dup],1)
+n &lt;- length(TPR)
+auc&lt;- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+data.frame(acc,sens,spec,ppv,f1,auc)
+}</code></pre>
+<pre class="r"><code>digimon7 &lt;- mutate(digimon, y = ifelse(Type == &quot;Vaccine&quot;, 1, 0)) #Binary response variable 
+fit7&lt;-glm(y~Attribute+Lv50Atk, data=digimon7,family=binomial(link=&quot;logit&quot;))
+summary(fit7) #Coefficients</code></pre>
+<pre><code>##
+## Call:
+## glm(formula = y ~ Attribute + Lv50Atk, family =
+binomial(link = &quot;logit&quot;),
+## data = digimon7)
+##
+## Deviance Residuals:
+## Min 1Q Median 3Q Max
+## -1.7025 -0.8088 -0.5567 0.8325 2.3814
+##
+## Coefficients:
+## Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept) -3.625485 0.901165 -4.023 5.74e-05 ***
+## AttributeEarth 1.285776 0.913831 1.407 0.15942
+## AttributeElectric 1.725609 0.868395 1.987 0.04691 *
+## AttributeFire 2.134905 0.818107 2.610 0.00907 **
+## AttributeLight 3.817972 0.845391 4.516 6.30e-06 ***
+## AttributeNeutral 1.366384 0.883440 1.547 0.12194
+## AttributePlant 1.344729 0.918607 1.464 0.14323
+## AttributeWater 2.381460 0.864914 2.753 0.00590 **
+## AttributeWind 2.531076 0.840373 3.012 0.00260 **
+## Lv50Atk 0.005558 0.003636 1.528 0.12642
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1
+##
+## (Dispersion parameter for binomial family taken to be 1)
+##
+## Null deviance: 295.82 on 248 degrees of freedom
+## Residual deviance: 251.76 on 239 degrees of freedom
+## AIC: 271.76
+##
+## Number of Fisher Scoring iterations: 5</code></pre>
+<pre class="r"><code>exp(coef(fit7)) %&gt;% round(3)</code></pre>
+<pre><code>## (Intercept) AttributeEarth AttributeElectric
+AttributeFire AttributeLight
+## 0.027 3.617 5.616 8.456 45.512
+## AttributeNeutral AttributePlant AttributeWater
+AttributeWind Lv50Atk
+## 3.921 3.837 10.821 12.567 1.006</code></pre>
+</div>
+<div id="the-exponential-intercept-above-represents-the-odds-of-the-digimon-being-a-vaccine-type-if-attribute-and-attack-power-level-at-50-is-controlled-which-is-0.027.-for-attributeearth-the-coefficient-says-that-while-controlling-for-lv50atk-if-the-digimon-is-an-earth-type-the-odds-of-it-being-a-vaccine-type-increase-by-a-factor-of-3.617.-for-attributeelectric-if-the-digimons-lv50atk-is-controlled-having-an-electric-attribute-will-increase-the-odds-of-the-digimon-being-a-vaccine-type-by-a-factor-or-5.616.-if-a-digimon-has-a-fire-attribute-while-controlling-for-lv50atk-the-odds-its-a-vaccine-type-increase-by-a-factor-of-8.456.-if-a-digimon-has-a-light-attribute-while-controlling-for-lv50atk-the-odds-its-a-vaccine-type-increase-by-a-factor-of-45.512.-if-a-digimon-has-a-neutral-attribute-while-controlling-for-lv50atk-the-odds-its-a-vaccine-type-increase-by-a-factor-of-3.921.-if-a-digimon-has-a-plant-attribute-while-controlling-for-lv50atk-the-odds-its-a-vaccine-type-increase-by-a-factor-of-3.837.if-a-digimon-has-a-water-attribute-while-controlling-for-lv50atk-the-odds-its-a-vaccine-type-increase-by-a-factor-of-10.821.-if-a-digimon-has-a-wind-attribute-while-controlling-for-lv50atk-the-odds-its-a-vaccine-type-increase-by-a-factor-of-12.567.-lastly-while-controlling-for-attribute-for-every-1-unit-increase-in-lv50atk-the-odds-of-the-digimon-being-a-vaccine-type-increase-by-1.006." class="section level4">
+<h4>The exponential intercept above represents the odds of the digimon being a Vaccine type, if attribute and Attack power level at 50 is controlled, which is 0.027. For AttributeEarth, the coefficient says that while controlling for Lv50Atk, if the digimon is an earth type, the odds of it being a vaccine type increase by a factor of 3.617. For AttributeElectric, if the digimon's lv50atk is controlled, having an electric attribute will increase the odds of the digimon being a vaccine type by a factor or 5.616. If a digimon has a fire attribute, while controlling for lv50Atk, the odds it's a vaccine type increase by a factor of 8.456. If a digimon has a Light attribute, while controlling for lv50Atk, the odds its a vaccine type increase by a factor of 45.512. If a digimon has a Neutral attribute, while controlling for lv50Atk, the odds its a vaccine type increase by a factor of 3.921. If a digimon has a Plant attribute, while controlling for lv50Atk, the odds its a vaccine type increase by a factor of 3.837.If a digimon has a water attribute, while controlling for lv50Atk, the odds its a vaccine type increase by a factor of 10.821. If a digimon has a wind attribute, while controlling for lv50Atk, the odds its a vaccine type increase by a factor of 12.567. Lastly, while controlling for attribute, for every 1 unit increase in Lv50Atk, the odds of the digimon being a vaccine type increase by 1.006.</h4>
+<pre class="r"><code>prob &lt;- predict(fit7, type = &quot;response&quot;)  #save predicted probabilities
+table(predict = as.numeric(prob &gt; 0.5), truth = digimon7$y) %&gt;% addmargins() #Confusion Matrix</code></pre>
+<pre><code>##        truth
+## predict   0   1 Sum
+##     0   168  50 218
+##     1    11  20  31
+##     Sum 179  70 249</code></pre>
+<pre class="r"><code>class_diag(prob, digimon7$y) # Sensititivety=TPR,Specificity=TNR,Precision=PPV, etc. </code></pre>
+<pre><code>## acc sens spec ppv f1 auc
+## 1 0.7550201 0.2857143 0.9385475 0.6451613 0.3960396
+0.7565443</code></pre>
+</div>
+<div id="a-confusion-matrix-is-presented-above.-additionally-based-on-my-model-the-accuracy-sensitivity-tpr-specificity-tnr-precision-ppv-and-auc-are-0.7550201-0.2857143-0.9385475-0.6451613-and-0.7565443-respectively." class="section level4">
+<h4>A confusion matrix is presented above. Additionally, based on my model, the Accuracy, Sensitivity (TPR), Specificity (TNR), Precision (PPV), and AUC are 0.7550201, 0.2857143, 0.9385475, 0.6451613, and 0.7565443, respectively.</h4>
+<pre class="r"><code>#Density plot
+digimon7-&gt;digimon8
+digimon8$y&lt;-as.factor(digimon8$y)
+digimon8$logit&lt;-predict(fit7,type=&quot;link&quot;)
+digimon8%&gt;%ggplot()+geom_density(aes(logit,color=y,fill=y), alpha=.4)+
+  theme(legend.position=c(.85,.85))+geom_vline(xintercept=0)+xlab(&quot;predictor (logit)&quot;)</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-19-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="the-graph-above-represents-a-density-plot-for-my-data." class="section level4">
+<h4>The graph above represents a density plot for my data.</h4>
+<pre class="r"><code>#install.packages(&quot;plotROC&quot;)
+library(plotROC)
+digimon7-&gt;digimon6
+fit&lt;-lm(y~Lv50Atk*Attribute,data=digimon6,family=&quot;binomial&quot;)
+digimon6$prob&lt;-predict(fit,type=&quot;response&quot;)
+digimon6$Attribute&lt;-as.factor(digimon6$Attribute)
+ROCplot&lt;-ggplot(digimon6)+geom_roc(aes(d=y,m=prob), n.cuts=0)
+ROCplot</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-20-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="the-graph-above-illustrates-the-roc-curve-for-my-data-and-from-the-first-glance-it-do-not-look-too-promising." class="section level4">
+<h4>The graph above illustrates the ROC Curve for my data, and from the first glance, it do not look too promising.</h4>
+<pre class="r"><code>calc_auc(ROCplot)</code></pre>
+<pre><code>##   PANEL group       AUC
+## 1     1    -1 0.7730646</code></pre>
+</div>
+<div id="the-auc-was-calculated-to-be-0.7730646-which-is-considered-fair-based-on-our-rules-of-thumb-for-auc-values." class="section level4">
+<h4>The AUC was calculated to be 0.7730646, which is considered &quot;FAIR&quot; based on our rules of thumb for AUC values.</h4>
+<ul>
+<li><p><strong>6. (25 pts)</strong> Perform a logistic regression predicting the same binary response variable from <em>ALL</em> of the rest of your variables (the more, the better!)</p>
+<ul>
+<li>Fit model, compute in-sample classification diagnostics (Accuracy, Sensitivity, Specificity, Precision, AUC), and interpret (5)</li>
+<li>Perform 10-fold (or repeated random sub-sampling) CV with the same model and report average out-of-sample classification diagnostics (Accuracy, Sensitivity, Specificity, Precision, and AUC); interpret AUC and compare with the in-sample metrics (10)</li>
+<li>Perform LASSO on the same model/variables. Choose lambda to give the simplest model whose accuracy is near that of the best (i.e., <code>lambda.1se</code>). Discuss which variables are retained. (5)</li>
+<li>Perform 10-fold CV using only the variables lasso selected: compare model's out-of-sample AUC to that of your logistic regressions above (5)</li>
+</ul></li>
+</ul>
+<pre class="r"><code>digimon7 &lt;- mutate(digimon, y = ifelse(Type == &quot;Vaccine&quot;, 1, 0)) #Binary response variable 
+fit9&lt;-glm(y~Attribute+Lv50Atk+Lv50HP+Lv50SP+Lv50Def+Lv50Int+Lv50Spd, data=digimon7,family=binomial(link=&quot;logit&quot;))
+
+prob1 &lt;- predict(fit9, type = &quot;response&quot;)
+class_diag(prob1, digimon7$y) %&gt;% round(3)</code></pre>
+<pre><code>##     acc  sens  spec   ppv    f1  auc
+## 1 0.771 0.329 0.944 0.697 0.447 0.76</code></pre>
+<pre class="r"><code>summary(fit9)</code></pre>
+<pre><code>##
+## Call:
+## glm(formula = y ~ Attribute + Lv50Atk + Lv50HP + Lv50SP
++ Lv50Def +
+## Lv50Int + Lv50Spd, family = binomial(link = &quot;logit&quot;),
+data = digimon7)
+##
+## Deviance Residuals:
+## Min 1Q Median 3Q Max
+## -1.6906 -0.8030 -0.5394 0.7875 2.3629
+##
+## Coefficients:
+## Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept) -4.1616066 1.2061574 -3.450 0.00056 ***
+## AttributeEarth 1.3177820 0.9704605 1.358 0.17450
+## AttributeElectric 1.6843807 0.9114307 1.848 0.06459 .
+## AttributeFire 2.2152322 0.8658287 2.559 0.01051 *
+## AttributeLight 3.7053144 0.8502846 4.358 1.31e-05 ***
+## AttributeNeutral 1.4207493 0.9009994 1.577 0.11483
+## AttributePlant 1.3783469 0.9469737 1.456 0.14552
+## AttributeWater 2.4247996 0.8857459 2.738 0.00619 **
+## AttributeWind 2.4630616 0.8977915 2.743 0.00608 **
+## Lv50Atk 0.0028020 0.0076384 0.367 0.71375
+## Lv50HP -0.0002032 0.0006933 -0.293 0.76950
+## Lv50SP -0.0015372 0.0155446 -0.099 0.92123
+## Lv50Def 0.0040250 0.0068182 0.590 0.55497
+## Lv50Int 0.0008612 0.0095524 0.090 0.92817
+## Lv50Spd 0.0059847 0.0110552 0.541 0.58827
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1
+##
+## (Dispersion parameter for binomial family taken to be 1)
+##
+## Null deviance: 295.82 on 248 degrees of freedom
+## Residual deviance: 250.52 on 234 degrees of freedom
+## AIC: 280.52
+##
+## Number of Fisher Scoring iterations: 5</code></pre>
+</div>
+<div id="based-on-the-model-created-above-the-only-significant-variables-are-the-attributes-wind-water-light-and-fire.-they-have-the-coefficients-2.4630616-2.42479963.7053144-and-2.2152322-respectively.-the-accuracy-sensitivity-specificity-precision-auc-were-calculated-to-be-0.7710.3290.9440.697and-0.76-respectively.-the-auc-of-0.76-is-classified-as-fair." class="section level4">
+<h4>Based on the model created above, the only significant variables are the attributes wind, water, light, and fire. They have the coefficients 2.4630616, 2.4247996,3.7053144, and 2.2152322 , respectively. The Accuracy, Sensitivity, Specificity, Precision, AUC were calculated to be 0.771,0.329,0.944,0.697,and 0.76, respectively. The auc of 0.76 is classified as &quot;fair&quot;.</h4>
+<pre class="r"><code>#10 fold cross
+set.seed(1234)
+k=10 #choose number of folds
+data&lt;-digimon7[sample(nrow(digimon7)),] #randomly order rows
+folds&lt;-cut(seq(1:nrow(digimon7)),breaks=k,labels=F) #create 10 folds
+diags&lt;-NULL
+for(i in 1:k){
+## Create training and test sets
+train&lt;-data[folds!=i,]
+test&lt;-data[folds==i,]
+truth&lt;-test$y
+## Train model on training set
+fit&lt;-glm(y~Attribute+Lv50Atk+Lv50HP+Lv50SP+Lv50Def+Lv50Int+Lv50Spd,data=train,family=&quot;binomial&quot;)
+probs&lt;-predict(fit,newdata = test,type=&quot;response&quot;)
+## Test model on test set (save all k results)
+diags&lt;-rbind(diags,class_diag(probs,truth))
+}
+diags%&gt;%summarize_all(mean) %&gt;% round(3)</code></pre>
+<pre><code>##    acc  sens  spec ppv  f1   auc
+## 1 0.73 0.276 0.902 NaN NaN 0.683</code></pre>
+</div>
+<div id="the-accuracy-sensitivity-specificity-precision-and-auc-calculated-using-k-fold-cv-method-is-0.730.2760.902nan-and-0.683-respectively.-the-auc-value-of-0.683-is-considered-poor." class="section level4">
+<h4>The Accuracy, Sensitivity, Specificity, Precision, and AUC calculated using K-fold CV method is 0.73,0.276,0.902,NaN, and 0.683, respectively. The AUC value of 0.683 is considered poor.</h4>
+<pre class="r"><code>#Lasso 
+
+library(glmnet)
+library(dplyr)
+digimon4&lt;-digimon7
+digimon4$y&lt;-as.factor(digimon4$y)
+digimon4$Attribute&lt;-factor(digimon4$Attribute)
+y &lt;- as.matrix(digimon4$y) #Grab response
+x &lt;- model.matrix(y~Attribute+Lv50Atk+Lv50HP+Lv50SP+Lv50Def+Lv50Int+Lv50Spd,data=digimon4)[,-1]#Grab predictors
+cv &lt;- cv.glmnet(x, y, family = &quot;binomial&quot;) #Picks optimal value for lambda 
+lasso &lt;- glmnet(x, y, family = &quot;binomial&quot;, lambda = cv$lambda.1se)
+coef(lasso) #Values that show up are the most predictive variables</code></pre>
+<pre><code>## 15 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+##                           s0
+## (Intercept)       -0.9845927
+## AttributeEarth     .        
+## AttributeElectric  .        
+## AttributeFire      .        
+## AttributeLight     0.3676875
+## AttributeNeutral   .        
+## AttributePlant     .        
+## AttributeWater     .        
+## AttributeWind      .        
+## Lv50Atk            .        
+## Lv50HP             .        
+## Lv50SP             .        
+## Lv50Def            .        
+## Lv50Int            .        
+## Lv50Spd            .</code></pre>
+</div>
+<div id="after-coducting-a-lasso-the-only-significant-variable-that-would-affect-whether-or-not-the-digimon-was-vaccine-type-or-not-is-if-their-attribute-was-light." class="section level4">
+<h4>After coducting a lasso, the only significant variable that would affect whether or not the digimon was Vaccine type or not is if their attribute was Light.</h4>
+<pre class="r"><code>#LASSO CV
+set.seed(2345)
+digimon4&lt;-digimon4 %&gt;%mutate(AttributeLight=ifelse(digimon4$Attribute==&quot;Light&quot;,1,0))
+k=10 #choose number of folds
+data1&lt;-digimon4[sample(nrow(digimon4)),] #randomly order rows
+folds&lt;-cut(seq(1:nrow(digimon4)),breaks=k,labels=F) #create folds
+diags&lt;-NULL
+for(i in 1:k){
+  train&lt;-data1[folds!=i,]
+  test&lt;-data1[folds==i,]
+  truth&lt;-test$y
+  fit&lt;-lm(y~AttributeLight,data=train,family=&quot;binomial&quot;)
+  probs&lt;-predict(fit,newdata = test,type=&quot;response&quot;)
+  diags&lt;-rbind(diags,class_diag(probs,truth))
+}
+diags%&gt;%summarize_all(mean)%&gt;%round(3)</code></pre>
+<pre><code>##     acc sens spec   ppv    f1   auc
+## 1 0.281    1    0 0.281 0.434 0.609</code></pre>
+</div>
+<div id="the-new-accuracy-sensitivity-specificity-precision-and-auc-calculated-using-only-significant-predictin-variables-is-0.2811-00.281-and-0.609-respectively.-the-auc-got-even-worst-so-its-possible-that-the-original-model-was-probably-not-overfitting-too-much." class="section level4">
+<h4>The new Accuracy, Sensitivity, Specificity, Precision, and AUC calculated using only significant predictin variables is 0.281,1 ,0,0.281, and 0.609, respectively. THe AUC got even worst! So it's possible that the original model was probably not overfitting too much.</h4>
+<p>Note that the <code>echo = FALSE</code> parameter was added to the code chunk to prevent printing of the R code that generated the plot.</p>
+</div>
+</div>
 </div>
 
             
