@@ -1,5 +1,5 @@
 ---
-title: Test Post
+title: Start Up Blog Post
 author: ''
 date: '2020-12-05'
 slug: test-post
@@ -8,6 +8,9 @@ tags: []
 description: ''
 ---
 
+<center>
+![](/post/2020-12-05-test-post_files/Puppy.jpeg){width=30%}
+</center>
 # Heading of my post 
 
 Content of my post 
@@ -18,12 +21,11 @@ More content
 
 ```{r}
 quakes<-quakes
+hist(quakes$mag)
 ```
 
 ```{python}
 r.quakes.mag.mean()
-
 ```
-<center>
-![](/post/2020-12-05-test-post_files/Nam Do san.jpg){width=20%}
-</center>
+
+
