@@ -13,9 +13,7 @@
       <pubDate>Sat, 05 Dec 2020 00:00:00 +0000</pubDate>
       
       <guid>/post/2020/12/05/test-post/</guid>
-      <description>   Heading of my post Content of my post
-Subheading More content
-quakes&amp;lt;-quakes hist(quakes$mag) r.quakes.mag.mean() ## 4.6204000000000001   </description>
+      <description>Python and R Python and R are two different yet similar languages. I would say that if you want to try and interpret data and present it in a visually appealing and igestible way then use R, but python definetily has more capabilites and options to do other things with. One fun fact is that R and python can work together to generate data and results. In the example below, I loaded the datasets &amp;quot;quakes&amp;quot; and generated a histogram in an r code chunk; however when interpreting (Calculating for mean) I used a python code, and I was stillable to gernerate results!</description>
     </item>
     
     <item>

@@ -11,13 +11,9 @@ description: ''
 <center>
 ![](/post/2020-12-05-test-post_files/Puppy.jpeg){width=30%}
 </center>
-# Heading of my post 
+# Python and R
 
-Content of my post 
-
-## Subheading 
-
-More content 
+Python and R are two different yet similar languages. I would say that if you want to try and interpret data and present it in a visually appealing and igestible way then use R, but python definetily has more capabilites and options to do other things with. One fun fact is that R and python can work together to generate data and results. In the example below, I loaded the datasets "quakes" and generated a histogram in an r code chunk; however when interpreting (Calculating for mean) I used a python code, and I was stillable to gernerate results! I like to think of it as 2 different paths to get the same results, because you can visualize data in r and python, but the codes used to generate them slightly vary from one another. 
 
 ```{r}
 quakes<-quakes
@@ -26,6 +22,19 @@ hist(quakes$mag)
 
 ```{python}
 r.quakes.mag.mean()
+```
+
+#Reticulate 
+Something really cool you can do with python and R is save two different variables in the r format then in a python format and have th print out together! For me, this is really interestng because its like how we speak two different languages. I speak vietnamese and english, so when I'm at home, I speak mostly vietnamese to my parents, but of course I slip up and sprinkle in some engish in mysentences. My parents are still ble to understand me even though their english isn't the best. This example is how i picture r and python. They are able to understand eachother and generate results and outputs. In the example below, I saved a variable in r and another in python, but I printed them both out in python, and of course just like how my dad was able to understand my english, python understands the r code and is able to generate the output that I requested! 
+
+```{r}
+library(reticulate)
+im<-"Lets go get some food before I lose mmy mind"
+```
+
+```{python}
+hungry="I was thinking Thai food!"
+print(r.im,hungry)
 ```
 
 
