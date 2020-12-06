@@ -9,7 +9,7 @@ description: ''
 ---
 
 <center>
-![](/post/2020-12-05-test-post_files/Puppy.jpeg){width=30%}
+![](/post/2020-12-05-test-post_files/PythonR.jpeg){width=40%}
 </center>
 # Python and R
 
