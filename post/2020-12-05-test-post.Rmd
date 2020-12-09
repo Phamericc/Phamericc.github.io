@@ -29,7 +29,7 @@ Something really cool you can do with python and R is save two different variabl
 
 ```{r}
 library(reticulate)
-im<-"Lets go get some food before I lose mmy mind"
+im<-"Lets go get some food before I lose my mind"
 ```
 
 ```{python}
