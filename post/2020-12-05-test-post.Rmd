@@ -17,11 +17,11 @@ Python and R are two different yet similar languages. I would say that if you wa
 
 ```{r}
 quakes<-quakes
-hist(quakes$mag)
+hist(quakes$depth)
 ```
 
 ```{python}
-r.quakes.mag.mean()
+r.quakes.depth.describe()
 ```
 
 #Communicating using two langauges 
@@ -37,4 +37,4 @@ hungry="I was thinking Thai food!"
 print(r.im,hungry)
 ```
 
-
+In general, I find the reticulate function and the ability of R and Python to communicate with eachother so interesting and useful!

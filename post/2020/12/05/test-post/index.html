@@ -79,10 +79,18 @@
 <h1>Python and R: Reticulate</h1>
 <p>Python and R are two different yet similar languages. I would say that if you want to try and interpret data and present it in a visually appealing and igestible way then use R, but python definetily has more capabilites and options to do other things with. One fun fact is that R and python can work together to generate data and results. In the example below, I loaded the datasets &quot;quakes&quot; and generated a histogram in an r code chunk; however when interpreting (Calculating for mean) I used a python code, and I was stillable to gernerate results! I like to think of it as 2 individuals contributing to a project to get results, you can generate and visualize data in r and then extrapolate using python codes. Of course the same could be done the other way around.</p>
 <pre class="r"><code>quakes&lt;-quakes
-hist(quakes$mag)</code></pre>
+hist(quakes$depth)</code></pre>
 <p><img src="../../../../../post/2020-12-05-test-post_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
-<pre class="python"><code>r.quakes.mag.mean()</code></pre>
-<pre><code>## 4.6204000000000001</code></pre>
+<pre class="python"><code>r.quakes.depth.describe()</code></pre>
+<pre><code>## count    1000.000000
+## mean      311.371000
+## std       215.535498
+## min        40.000000
+## 25%        99.000000
+## 50%       247.000000
+## 75%       543.000000
+## max       680.000000
+## Name: depth, dtype: float64</code></pre>
 </div>
 <div id="communicating-using-two-langauges" class="section level1">
 <h1>Communicating using two langauges</h1>
@@ -92,6 +100,7 @@ im&lt;-&quot;Lets go get some food before I lose my mind&quot;</code></pre>
 <pre class="python"><code>hungry=&quot;I was thinking Thai food!&quot;
 print(r.im,hungry)</code></pre>
 <pre><code>## Lets go get some food before I lose my mind I was thinking Thai food!</code></pre>
+<p>In general, I find the reticulate function and the ability of R and Python to communicate with eachother so interesting and useful!</p>
 </div>
 
             
