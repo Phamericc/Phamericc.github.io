@@ -1,5 +1,5 @@
 ---
-title: "FINALPROECT2"
+title: "Project2"
 author: "Eric Pham"
 date: "11/19/2020"
 output: html_document
