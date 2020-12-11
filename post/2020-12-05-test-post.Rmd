@@ -11,21 +11,8 @@ description: ''
 <center>
 ![](/post/2020-12-05-test-post_files/PythonR.jpeg){width=40%}
 </center>
-# Python and R: Reticulate
-
-Python and R are two different yet similar languages. I would say that if you want to try and interpret data and present it in a visually appealing and igestible way then use R, but python definetily has more capabilites and options to do other things with. One fun fact is that R and python can work together to generate data and results. In the example below, I loaded the datasets "quakes" and generated a histogram in an r code chunk; however when interpreting (Calculating for mean) I used a python code, and I was stillable to gernerate results! I like to think of it as 2 individuals contributing to a project to get results, you can generate and visualize data in r and then  extrapolate using python codes. Of course the same could be done the other way around. 
-
-```{r}
-quakes<-quakes
-hist(quakes$depth)
-```
-
-```{python}
-r.quakes.depth.describe()
-```
-
-#Communicating using two langauges 
-Additionally, something really cool you can do with python and R is save two different variables in the r format then in a python format and have th print out together! For me, this is really interestng because its like how we speak two different languages. I speak vietnamese and english, so when I'm at home, I speak mostly vietnamese to my grandparents, but of course I slip up and sprinkle in some engish in my sentences. My grandparents are still ble to understand me even though they know very minimal english. That is how I picture r and python to work, except they are able to understand eachother, generating results and whatever outputs we desire. In the example below, I saved a variable in r and another in python, but I printed them both out in python, and of course just like how my grandparents were able to understand my english, python understands the r code and is able to generate the output that I requested! 
+# Python and R: Reticulate - Communicating using two langauges 
+Python and R are two different yet similar languages. I would say that if you want to try and interpret data and present it in a visually appealing and digestible way then use R, but python definetily has more capabilites and options to do other things with. One fun fact is that R and python can work together to generate data and results. In the example below, what you can do with python and R is save two different variables in the r format then in a python format and have th print out together! For me, this is really interestng because its like how we speak two different languages. I speak vietnamese and english, so when I'm at home, I speak mostly vietnamese to my grandparents, but of course I sometimes forget and speak english to my grandparents. My grandparents are still ble to understand me even and give me an answer even though they themselves cannot speak english. That is how I picture r and python to work. They are able to understand eachother, generating results and whatever outputs we desire. In the example below, I saved a variable in r and another in python, but I printed them both out in python, and of course just like how my grandparents were able to understand my english, python understands the r code and is able to generate the output that I requested! 
 
 ```{r}
 library(reticulate)
@@ -37,4 +24,14 @@ hungry="I was thinking Thai food!"
 print(r.im,hungry)
 ```
 
-In general, I find the reticulate function and the ability of R and Python to communicate with eachother so interesting and useful!
+In another example, I loaded the datasets "quakes" and generated a histogram in an r code chunk; however when interpreting (extrapolating) I used a python code, and I was stillable to gernerate results! I like to think of it as 2 individuals contributing to a project to get results, you can generate and visualize data in r and then extrapolate using python codes. Of course the same could be done the other way around. 
+
+```{r}
+quakes<-quakes
+hist(quakes$depth)
+```
+
+```{python}
+r.quakes.depth.describe()
+```
+

@@ -75,12 +75,18 @@
 <center>
 <img src="../../../../../post/2020-12-05-test-post_files/PythonR.jpeg" style="width:40.0%" />
 </center>
-<div id="python-and-r-reticulate" class="section level1">
-<h1>Python and R: Reticulate</h1>
-<p>Python and R are two different yet similar languages. I would say that if you want to try and interpret data and present it in a visually appealing and igestible way then use R, but python definetily has more capabilites and options to do other things with. One fun fact is that R and python can work together to generate data and results. In the example below, I loaded the datasets &quot;quakes&quot; and generated a histogram in an r code chunk; however when interpreting (Calculating for mean) I used a python code, and I was stillable to gernerate results! I like to think of it as 2 individuals contributing to a project to get results, you can generate and visualize data in r and then extrapolate using python codes. Of course the same could be done the other way around.</p>
+<div id="python-and-r-reticulate---communicating-using-two-langauges" class="section level1">
+<h1>Python and R: Reticulate - Communicating using two langauges</h1>
+<p>Python and R are two different yet similar languages. I would say that if you want to try and interpret data and present it in a visually appealing and digestible way then use R, but python definetily has more capabilites and options to do other things with. One fun fact is that R and python can work together to generate data and results. In the example below, what you can do with python and R is save two different variables in the r format then in a python format and have th print out together! For me, this is really interestng because its like how we speak two different languages. I speak vietnamese and english, so when I'm at home, I speak mostly vietnamese to my grandparents, but of course I sometimes forget and speak english to my grandparents. My grandparents are still ble to understand me even and give me an answer even though they themselves cannot speak english. That is how I picture r and python to work. They are able to understand eachother, generating results and whatever outputs we desire. In the example below, I saved a variable in r and another in python, but I printed them both out in python, and of course just like how my grandparents were able to understand my english, python understands the r code and is able to generate the output that I requested!</p>
+<pre class="r"><code>library(reticulate)
+im&lt;-&quot;Lets go get some food before I lose my mind&quot;</code></pre>
+<pre class="python"><code>hungry=&quot;I was thinking Thai food!&quot;
+print(r.im,hungry)</code></pre>
+<pre><code>## Lets go get some food before I lose my mind I was thinking Thai food!</code></pre>
+<p>In another example, I loaded the datasets &quot;quakes&quot; and generated a histogram in an r code chunk; however when interpreting (extrapolating) I used a python code, and I was stillable to gernerate results! I like to think of it as 2 individuals contributing to a project to get results, you can generate and visualize data in r and then extrapolate using python codes. Of course the same could be done the other way around.</p>
 <pre class="r"><code>quakes&lt;-quakes
 hist(quakes$depth)</code></pre>
-<p><img src="../../../../../post/2020-12-05-test-post_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p><img src="../../../../../post/2020-12-05-test-post_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <pre class="python"><code>r.quakes.depth.describe()</code></pre>
 <pre><code>## count    1000.000000
 ## mean      311.371000
@@ -91,16 +97,6 @@ hist(quakes$depth)</code></pre>
 ## 75%       543.000000
 ## max       680.000000
 ## Name: depth, dtype: float64</code></pre>
-</div>
-<div id="communicating-using-two-langauges" class="section level1">
-<h1>Communicating using two langauges</h1>
-<p>Additionally, something really cool you can do with python and R is save two different variables in the r format then in a python format and have th print out together! For me, this is really interestng because its like how we speak two different languages. I speak vietnamese and english, so when I'm at home, I speak mostly vietnamese to my grandparents, but of course I slip up and sprinkle in some engish in my sentences. My grandparents are still ble to understand me even though they know very minimal english. That is how I picture r and python to work, except they are able to understand eachother, generating results and whatever outputs we desire. In the example below, I saved a variable in r and another in python, but I printed them both out in python, and of course just like how my grandparents were able to understand my english, python understands the r code and is able to generate the output that I requested!</p>
-<pre class="r"><code>library(reticulate)
-im&lt;-&quot;Lets go get some food before I lose my mind&quot;</code></pre>
-<pre class="python"><code>hungry=&quot;I was thinking Thai food!&quot;
-print(r.im,hungry)</code></pre>
-<pre><code>## Lets go get some food before I lose my mind I was thinking Thai food!</code></pre>
-<p>In general, I find the reticulate function and the ability of R and Python to communicate with eachother so interesting and useful!</p>
 </div>
 
             
